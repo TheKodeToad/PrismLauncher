@@ -22,10 +22,13 @@ import org.prismlauncher.utils.Utils;
 
 import java.applet.Applet;
 import java.io.File;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -58,10 +61,10 @@ public final class OneSixLauncher implements Launcher {
     public OneSixLauncher(Parameters params) {
         classLoader = ClassLoader.getSystemClassLoader();
 
-        mcParams = params.allSafe("param", new ArrayList<String>());
+        mcParams = params.allSafe("param", Collections.EMPTY_LIST);
         mainClass = params.firstSafe("mainClass", "net.minecraft.client.Minecraft");
         appletClass = params.firstSafe("appletClass", "net.minecraft.client.MinecraftApplet");
-        traits = params.allSafe("traits", new ArrayList<String>());
+        traits = params.allSafe("traits", Collections.EMPTY_LIST);
 
         userName = params.first("userName");
         sessionId = params.first("sessionId");
@@ -77,7 +80,7 @@ public final class OneSixLauncher implements Launcher {
         if (windowParams != null) {
             String[] dimStrings = windowParams.split("x");
 
-            if (windowParams.equalsIgnoreCase("max")) {
+            if (windowParams.equals("max")) {
                 maximize = true;
 
                 winSizeW = DEFAULT_WINDOW_WIDTH;
@@ -98,13 +101,13 @@ public final class OneSixLauncher implements Launcher {
         }
     }
 
-    private void invokeMain(Class<?> mainClass) throws Exception {
-        Method method = mainClass.getMethod("main", String[].class);
+    private void invokeMain(Class<?> mainClass) throws Throwable {
+        MethodHandle method = MethodHandles.lookup().findStatic(mainClass, "main", MethodType.methodType(void.class, String[].class));
 
-        method.invoke(null, (Object) mcParams.toArray(new String[0]));
+        method.invokeExact(mcParams.toArray(new String[0]));
     }
 
-    private void legacyLaunch() throws Exception {
+    private void legacyLaunch() throws Throwable {
         // Get the Minecraft Class and set the base folder
         Class<?> minecraftClass = classLoader.loadClass(mainClass);
 
@@ -126,7 +129,8 @@ public final class OneSixLauncher implements Launcher {
             try {
                 Class<?> mcAppletClass = classLoader.loadClass(appletClass);
 
-                Applet mcApplet = (Applet) mcAppletClass.getConstructor().newInstance();
+                MethodHandle mcAppletConstructor = MethodHandles.lookup().findConstructor(mcAppletClass, MethodType.methodType(void.class));
+                Applet mcApplet = (Applet) mcAppletConstructor.invokeExact();
 
                 LegacyFrame mcWindow = new LegacyFrame(windowTitle, mcApplet);
 
@@ -152,7 +156,7 @@ public final class OneSixLauncher implements Launcher {
         invokeMain(minecraftClass);
     }
 
-    private void launchWithMainClass() throws Exception {
+    private void launchWithMainClass() throws Throwable {
         // window size, title and state, onesix
 
         // FIXME: there is no good way to maximize the minecraft window in onesix.
@@ -177,7 +181,7 @@ public final class OneSixLauncher implements Launcher {
     }
 
     @Override
-    public void launch() throws Exception {
+    public void launch() throws Throwable {
         if (traits.contains("legacyLaunch") || traits.contains("alphaLaunch")) {
             // legacy launch uses the applet wrapper
             legacyLaunch();

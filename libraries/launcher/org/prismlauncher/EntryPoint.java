@@ -88,11 +88,11 @@ public final class EntryPoint {
 
         switch (tokens[0]) {
             case "launch": {
-                return Action.Launch;
+                return Action.LAUNCH;
             }
 
             case "abort": {
-                return Action.Abort;
+                return Action.ABORT;
             }
 
             default: {
@@ -101,13 +101,13 @@ public final class EntryPoint {
 
                 params.add(tokens[0], tokens[1]);
 
-                return Action.Proceed;
+                return Action.PROCEED;
             }
         }
     }
 
     public int listen() {
-        Action action = Action.Proceed;
+        Action action = Action.PROCEED;
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(
                 System.in,
@@ -115,11 +115,11 @@ public final class EntryPoint {
         ))) {
             String line;
 
-            while (action == Action.Proceed) {
+            while (action == Action.PROCEED) {
                 if ((line = reader.readLine()) != null) {
                     action = parseLine(line);
                 } else {
-                    action = Action.Abort;
+                    action = Action.ABORT;
                 }
             }
         } catch (IOException | ParseException e) {
@@ -129,7 +129,7 @@ public final class EntryPoint {
         }
 
         // Main loop
-        if (action == Action.Abort) {
+        if (action == Action.ABORT) {
             LOGGER.info("Launch aborted by the launcher.");
 
             return 1;
@@ -148,7 +148,7 @@ public final class EntryPoint {
             LOGGER.log(Level.SEVERE, "Wrong argument.", e);
 
             return 1;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             LOGGER.log(Level.SEVERE, "Exception caught from launcher.", e);
 
             return 1;
@@ -156,9 +156,9 @@ public final class EntryPoint {
     }
 
     private enum Action {
-        Proceed,
-        Launch,
-        Abort
+        PROCEED,
+        LAUNCH,
+        ABORT
     }
 
 }
