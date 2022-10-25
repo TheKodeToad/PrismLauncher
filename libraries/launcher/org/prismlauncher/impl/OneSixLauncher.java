@@ -60,10 +60,10 @@ public final class OneSixLauncher implements Launcher {
     public OneSixLauncher(Parameters params) {
         classLoader = ClassLoader.getSystemClassLoader();
 
-        mcParams = params.allSafe("param", Collections.EMPTY_LIST);
+        mcParams = params.allSafe("param", Collections.<String>emptyList());
         mainClass = params.firstSafe("mainClass", "net.minecraft.client.Minecraft");
         appletClass = params.firstSafe("appletClass", "net.minecraft.client.MinecraftApplet");
-        traits = params.allSafe("traits", Collections.EMPTY_LIST);
+        traits = params.allSafe("traits", Collections.<String>emptyList());
 
         userName = params.first("userName");
         sessionId = params.first("sessionId");
