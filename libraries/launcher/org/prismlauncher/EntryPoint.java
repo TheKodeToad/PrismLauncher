@@ -81,28 +81,30 @@ public final class EntryPoint {
     }
 
     private Action parseLine(String inData) throws ParseException {
-        String[] tokens = inData.split("\\s+", 2);
-
-        if (tokens.length == 0)
+        if (inData.length() == 0)
             throw new ParseException("Unexpected empty string!");
 
-        switch (tokens[0]) {
-            case "launch": {
+        String first = inData;
+        String second = null;
+        int splitPoint = inData.indexOf(' ');
+
+        if (splitPoint != -1) {
+            first = first.substring(0, splitPoint);
+            second = inData.substring(splitPoint + 1);
+        }
+
+        switch (first) {
+            case "launch":
                 return Action.LAUNCH;
-            }
-
-            case "abort": {
+            case "abort":
                 return Action.ABORT;
-            }
-
-            default: {
-                if (tokens.length != 2)
+            default:
+                if (second == null || second.isEmpty())
                     throw new ParseException("Error while parsing:" + inData);
 
-                params.add(tokens[0], tokens[1]);
+                params.add(first, second);
 
                 return Action.PROCEED;
-            }
         }
     }
 
@@ -123,7 +125,7 @@ public final class EntryPoint {
                 }
             }
         } catch (IOException | ParseException e) {
-            LOGGER.log(Level.SEVERE, "Launcher ABORT due to exception:", e);
+            LOGGER.log(Level.SEVERE, "Launcher abort due to exception:", e);
 
             return 1;
         }

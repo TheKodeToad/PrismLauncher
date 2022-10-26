@@ -35,7 +35,8 @@
 
 package org.prismlauncher;
 
-import org.prismlauncher.impl.OneSixLauncher;
+import org.prismlauncher.impl.LegacyLauncher;
+import org.prismlauncher.impl.StandardLauncher;
 import org.prismlauncher.utils.Parameters;
 
 import java.util.HashMap;
@@ -48,10 +49,16 @@ public final class LauncherFactory {
     private final Map<String, LauncherProvider> launcherRegistry = new HashMap<>();
 
     private LauncherFactory() {
-        launcherRegistry.put("onesix", new LauncherProvider() {
+        launcherRegistry.put("standard", new LauncherProvider() {
             @Override
             public Launcher provide(Parameters parameters) {
-                return new OneSixLauncher(parameters);
+                return new StandardLauncher(parameters);
+            }
+        });
+        launcherRegistry.put("legacy", new LauncherProvider() {
+            @Override
+            public Launcher provide(Parameters parameters) {
+                return new LegacyLauncher(parameters);
             }
         });
     }

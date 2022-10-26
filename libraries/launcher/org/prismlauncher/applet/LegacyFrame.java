@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@SuppressWarnings("removal")
 public final class LegacyFrame extends Frame {
 
     private static final Logger LOGGER = Logger.getLogger("LegacyFrame");
@@ -44,7 +45,6 @@ public final class LegacyFrame extends Frame {
         super(title);
 
         appletWrap = new Launcher(mcApplet);
-        appletWrap.setParameter("stand-alone", "true"); // Show the quit button. Required here otherwise the option will be ignored.
 
         mcApplet.setStub(appletWrap);
 
@@ -106,6 +106,7 @@ public final class LegacyFrame extends Frame {
 
         appletWrap.setParameter("username", user);
         appletWrap.setParameter("sessionid", session);
+        appletWrap.setParameter("stand-alone", "true"); // Show the quit button. TODO: why won't this work?
         appletWrap.setParameter("haspaid", "true"); // Some old versions need this for world saves to work.
         appletWrap.setParameter("demo", isDemo ? "true" : "false");
         appletWrap.setParameter("fullscreen", "false");
