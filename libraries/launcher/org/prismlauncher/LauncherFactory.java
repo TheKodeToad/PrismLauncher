@@ -44,7 +44,7 @@ import java.util.Map;
 
 public final class LauncherFactory {
 
-    private static final LauncherFactory INSTANCE = new LauncherFactory();
+    public static final LauncherFactory INSTANCE = new LauncherFactory();
 
     private final Map<String, LauncherProvider> launcherRegistry = new HashMap<>();
 
@@ -72,10 +72,6 @@ public final class LauncherFactory {
             throw new IllegalArgumentException("Invalid launcher type: " + name);
 
         return launcherProvider.provide(parameters);
-    }
-
-    public static LauncherFactory getInstance() {
-        return INSTANCE;
     }
 
     public interface LauncherProvider {
