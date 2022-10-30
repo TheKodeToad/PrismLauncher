@@ -69,13 +69,10 @@ import java.util.logging.Logger;
 public final class EntryPoint {
 
     private static final Logger LOGGER = Logger.getLogger("EntryPoint");
-
-    private final Parameters params = new Parameters();
+    private static final Parameters PARAMS = new Parameters();
 
     public static void main(String[] args) {
-        EntryPoint listener = new EntryPoint();
-
-        ExitCode exitCode = listener.listen();
+        ExitCode exitCode = listen();
 
         if (exitCode != ExitCode.NORMAL) {
             LOGGER.warning("Exiting with " + exitCode);
@@ -112,7 +109,7 @@ public final class EntryPoint {
         }
     }
 
-    public ExitCode listen() {
+    private static ExitCode listen() {
         PreLaunchAction preLaunchAction = PreLaunchAction.PROCEED;
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(
@@ -123,7 +120,7 @@ public final class EntryPoint {
 
             while (preLaunchAction == PreLaunchAction.PROCEED) {
                 if ((line = reader.readLine()) != null) {
-                    preLaunchAction = parseLine(line, this.params);
+                    preLaunchAction = parseLine(line, PARAMS);
                 } else {
                     preLaunchAction = PreLaunchAction.ABORT;
                 }
@@ -142,7 +139,7 @@ public final class EntryPoint {
         }
 
         try {
-            Launcher launcher = LauncherFactory.createLauncher(params);
+            Launcher launcher = LauncherFactory.createLauncher(PARAMS);
 
             launcher.launch();
 
