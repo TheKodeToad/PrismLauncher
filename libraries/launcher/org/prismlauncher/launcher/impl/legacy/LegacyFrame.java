@@ -76,7 +76,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
+@SuppressWarnings({ "serial", "removal", "deprecation", "RedundantSuppression" })
 public final class LegacyFrame extends Frame {
 
     private static final Logger LOGGER = Logger.getLogger("LegacyFrame");

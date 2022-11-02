@@ -70,6 +70,7 @@ import java.util.TreeMap;
  * <p>
  * Changing field and method declarations without further testing is not recommended.
  */
+@SuppressWarnings({ "serial", "removal", "deprecation", "ImplicitCallToSuper", "RedundantSuppression" })
 public final class Launcher extends Applet implements AppletStub {
 
     private final Map<String, String> params = new TreeMap<>();
