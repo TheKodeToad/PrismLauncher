@@ -57,7 +57,6 @@
 
 package org.prismlauncher.launcher.impl.legacy;
 
-
 import net.minecraft.Launcher;
 
 import javax.imageio.ImageIO;
@@ -76,8 +75,9 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-@SuppressWarnings({ "serial", "removal", "deprecation", "RedundantSuppression" })
-public final class LegacyFrame extends Frame {
+
+@SuppressWarnings({ "serial", "removal" })
+public final class LegacyFrame extends Frame /* TODO consider JFrame */ {
 
     private static final Logger LOGGER = Logger.getLogger("LegacyFrame");
 

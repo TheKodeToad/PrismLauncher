@@ -70,23 +70,15 @@ import java.util.TreeMap;
  * <p>
  * Changing field and method declarations without further testing is not recommended.
  */
-@SuppressWarnings({
-        "serial",
-        "removal",
-        "deprecation",
-        "ImplicitCallToSuper",
-        "RedundantSuppression",
-        "OverlyBroadCatchBlock",
-        "HttpUrlsUsage"
-})
+@SuppressWarnings("removal")
 public final class Launcher extends Applet implements AppletStub {
+
+    private static final long serialVersionUID = 1L;
 
     private final Map<String, String> params = new TreeMap<>();
 
     private Applet wrappedApplet;
-
     private final URL documentBase;
-
     private boolean active = false;
 
     public Launcher(Applet applet) {
