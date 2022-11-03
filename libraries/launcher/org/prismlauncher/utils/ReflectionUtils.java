@@ -53,7 +53,8 @@ public final class ReflectionUtils {
 
     private static final Logger LOGGER = Logger.getLogger("ReflectionUtils");
 
-    private ReflectionUtils() {}
+    private ReflectionUtils() {
+    }
 
     /**
      * Instantiate an applet class by name
@@ -68,8 +69,7 @@ public final class ReflectionUtils {
      *                                method handles
      * @throws Throwable              any exceptions from the class's constructor
      */
-    public static Applet createAppletClass(String appletClassName) throws Throwable
-    {
+    public static Applet createAppletClass(String appletClassName) throws Throwable {
         Class<?> appletClass = ClassLoader.getSystemClassLoader().loadClass(appletClassName);
 
         MethodHandle appletConstructor = MethodHandles.lookup().findConstructor(appletClass,
@@ -84,8 +84,7 @@ public final class ReflectionUtils {
      *
      * @return The found field.
      */
-    public static Field getMinecraftGameDirField(Class<?> minecraftMainClass)
-    {
+    public static Field getMinecraftGameDirField(Class<?> minecraftMainClass) {
         LOGGER.fine("Resolving minecraft game directory field");
         // Field we're looking for is always
         // private static File obfuscatedName = null;
@@ -142,8 +141,7 @@ public final class ReflectionUtils {
      * @throws IllegalAccessException If method handles cannot access the entrypoint
      */
     public static MethodHandle findMainEntrypoint(Class<?> entrypointClass)
-            throws NoSuchMethodException, IllegalAccessException
-    {
+            throws NoSuchMethodException, IllegalAccessException {
         return MethodHandles.lookup().findStatic(entrypointClass, "main",
                 MethodType.methodType(void.class, String[].class));
     }
@@ -169,7 +167,8 @@ public final class ReflectionUtils {
      * @throws IllegalAccessException If method handles cannot access the entrypoint
      */
     public static MethodHandle findMainMethod(String entrypointClassName)
-            throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException
-    { return findMainEntrypoint(ClassLoader.getSystemClassLoader().loadClass(entrypointClassName)); }
+            throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException {
+        return findMainEntrypoint(ClassLoader.getSystemClassLoader().loadClass(entrypointClassName));
+    }
 
 }
