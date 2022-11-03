@@ -60,10 +60,9 @@ package org.prismlauncher.launcher.impl.legacy;
 import net.minecraft.Launcher;
 
 import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-
 import java.applet.Applet;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -78,7 +77,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @SuppressWarnings({ "serial", "removal" })
-public final class LegacyFrame extends JFrame {
+public final class LegacyFrame extends Frame /* TODO consider JFrame */ {
 
     private static final Logger LOGGER = Logger.getLogger("LegacyFrame");
 
