@@ -70,6 +70,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public final class EntryPoint {
+
     private static final Logger LOGGER = Logger.getLogger("EntryPoint");
 
     private EntryPoint() {
