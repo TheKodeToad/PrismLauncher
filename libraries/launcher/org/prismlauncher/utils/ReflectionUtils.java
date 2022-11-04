@@ -48,7 +48,6 @@ import java.lang.reflect.Modifier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@SuppressWarnings("removal")
 public final class ReflectionUtils {
 
     private static final Logger LOGGER = Logger.getLogger("ReflectionUtils");

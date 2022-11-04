@@ -116,7 +116,6 @@ public final class EntryPoint {
             String line;
 
             while (preLaunchAction == PreLaunchAction.PROCEED) {
-                // noinspection NestedAssignment
                 if ((line = reader.readLine()) != null)
                     preLaunchAction = parseLine(line, parameters);
                 else

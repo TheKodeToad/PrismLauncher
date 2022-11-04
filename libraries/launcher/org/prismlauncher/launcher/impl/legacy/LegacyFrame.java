@@ -77,10 +77,10 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@SuppressWarnings({ "serial", "removal" })
 public final class LegacyFrame extends JFrame {
 
     private static final Logger LOGGER = Logger.getLogger("LegacyFrame");
+    private static final long serialVersionUID = 1L;
 
     private final Launcher launcher;
 
