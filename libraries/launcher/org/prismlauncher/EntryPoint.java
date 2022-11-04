@@ -173,7 +173,7 @@ public final class EntryPoint {
     }
 
     private enum ExitCode {
-        NORMAL(0), ABORT(1), ERROR(2), ILLEGAL_ARGUMENT(3), REFLECTION_EXCEPTION(4);
+        NORMAL(0), ABORT(1), ERROR(2), ILLEGAL_ARGUMENT(65), REFLECTION_EXCEPTION(3);
 
         private final int numericalCode;
 
