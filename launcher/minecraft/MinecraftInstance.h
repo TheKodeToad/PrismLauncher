@@ -130,6 +130,7 @@ public:
     QString createLaunchScript(AuthSessionPtr session, MinecraftServerTargetPtr serverToJoin);
     /// get arguments passed to java
     QStringList javaArguments();
+    QString getLauncher();
 
     /// get variables for launch command variable substitution/environment
     QMap<QString, QString> getVariables() override;

@@ -146,9 +146,6 @@ public final class EntryPoint {
                     throw new IllegalArgumentException("Invalid launcher type: " + type);
             }
 
-            Log.launcher("Using " + type + " launcher");
-            Log.blankLine();
-
             launcher.launch();
 
             return ExitCode.NORMAL;
