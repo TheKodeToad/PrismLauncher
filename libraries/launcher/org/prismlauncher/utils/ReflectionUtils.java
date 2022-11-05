@@ -61,12 +61,10 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.prismlauncher.utils.logging.Log;
 
 public final class ReflectionUtils {
-
-    private static final Logger LOGGER = Logger.getLogger("ReflectionUtils");
 
     private ReflectionUtils() {
     }
@@ -100,7 +98,7 @@ public final class ReflectionUtils {
      * @return The found field.
      */
     public static Field getMinecraftGameDirField(Class<?> minecraftMainClass) {
-        LOGGER.fine("Resolving minecraft game directory field");
+        Log.debug("Resolving minecraft game directory field");
         // Field we're looking for is always
         // private static File obfuscatedName = null;
         for (Field field : minecraftMainClass.getDeclaredFields()) {
@@ -113,24 +111,23 @@ public final class ReflectionUtils {
 
             // Must be static
             if (!Modifier.isStatic(fieldModifiers)) {
-                LOGGER.log(Level.FINE, "Rejecting field {0} because it is not static", field.getName());
+                Log.debug("Rejecting field " + field.getName() + " because it is not static");
                 continue;
             }
 
             // Must be private
             if (!Modifier.isPrivate(fieldModifiers)) {
-                LOGGER.log(Level.FINE, "Rejecting field {0} because it is not private", field.getName());
+                Log.debug("Rejecting field " + field.getName() + " because it is not private");
                 continue;
             }
 
             // Must not be final
             if (Modifier.isFinal(fieldModifiers)) {
-                LOGGER.log(Level.FINE, "Rejecting field {0} because it is final", field.getName());
+                Log.debug("Rejecting field " + field.getName() + " because it is final");
                 continue;
             }
 
-            LOGGER.log(Level.FINE, "Identified field {0} to match conditions for minecraft game directory field",
-                    field.getName());
+            Log.debug("Identified field " + field.getName() + " to match conditions for minecraft game directory field");
 
             return field;
         }
