@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /*
- *  Prism Launcher
- *
+ *  PolyMC - Minecraft Launcher
  *  Copyright (C) 2022 solonovamax <solonovamax@12oclockpoint.com>
  *
  *  This program is free software: you can redistribute it and/or modify
