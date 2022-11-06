@@ -104,7 +104,6 @@ public final class LegacyFrame extends JFrame {
         // folder.
 
         Path mpticketFile = Paths.get(System.getProperty("user.dir"), "..", "mpticket");
-
         Path mpticketFileCorrupt = Paths.get(System.getProperty("user.dir"), "..", "mpticket.corrupt");
 
         if (Files.exists(mpticketFile)) {

@@ -74,7 +74,7 @@ public final class LegacyLauncher extends AbstractLauncher {
     private final String user, session;
     private final String title;
     private final String appletClass;
-    private final boolean usesApplet;
+    private final boolean useApplet;
     private final String cwd;
 
     public LegacyLauncher(Parameters params) {
@@ -86,7 +86,7 @@ public final class LegacyLauncher extends AbstractLauncher {
         this.appletClass = params.getString("appletClass", "net.minecraft.client.MinecraftApplet");
 
         List<String> traits = params.getList("traits", Collections.<String>emptyList());
-        this.usesApplet = !traits.contains("noapplet");
+        this.useApplet = !traits.contains("noapplet");
 
         this.cwd = System.getProperty("user.dir");
     }
@@ -103,7 +103,9 @@ public final class LegacyLauncher extends AbstractLauncher {
             gameDirField.set(null /* field is static, so instance is null */, new File(this.cwd));
         }
 
-        if (this.usesApplet) {
+        if (this.useApplet) {
+            System.setProperty("minecraft.applet.TargetDirectory", this.cwd);
+
             Log.launcher("Launching with applet wrapper...");
 
             try {
