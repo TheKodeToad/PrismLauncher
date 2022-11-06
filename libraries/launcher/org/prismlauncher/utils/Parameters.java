@@ -81,7 +81,7 @@ public final class Parameters {
         List<String> params = this.map.get(key);
 
         if (params == null)
-            throw ParameterNotFoundException.forParameterName(key);
+            throw new ParameterNotFoundException(key);
 
         return params;
     }
@@ -99,7 +99,7 @@ public final class Parameters {
         List<String> list = this.getList(key);
 
         if (list.isEmpty())
-            throw ParameterNotFoundException.forParameterName(key);
+            throw new ParameterNotFoundException(key);
 
         return list.get(0);
     }

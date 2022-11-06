@@ -41,23 +41,8 @@ public final class ParameterNotFoundException extends IllegalArgumentException {
 
     private static final long serialVersionUID = 1L;
 
-    public ParameterNotFoundException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public ParameterNotFoundException(Throwable cause) {
-        super(cause);
-    }
-
-    public ParameterNotFoundException(String message) {
-        super(message);
-    }
-
-    public ParameterNotFoundException() {
-    }
-
-    public static ParameterNotFoundException forParameterName(String parameterName) {
-        return new ParameterNotFoundException(String.format("Unknown parameter name '%s'", parameterName));
+    public ParameterNotFoundException(String key) {
+        super(String.format("Required parameter '%s' was not found", key));
     }
 
 }

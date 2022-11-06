@@ -64,11 +64,10 @@ import org.prismlauncher.utils.StringUtils;
 
 public abstract class AbstractLauncher implements Launcher {
 
-    private static final int DEFAULT_WINDOW_WIDTH = 854;
-    private static final int DEFAULT_WINDOW_HEIGHT = 480;
+    private static final int DEFAULT_WINDOW_WIDTH = 854, DEFAULT_WINDOW_HEIGHT = 480;
 
     // parameters, separated from ParamBucket
-    protected final List<String> mcParams;
+    protected final List<String> gameArgs;
 
     // secondary parameters
     protected final int width, height;
@@ -78,7 +77,7 @@ public abstract class AbstractLauncher implements Launcher {
     protected final String mainClassName;
 
     protected AbstractLauncher(Parameters params) {
-        this.mcParams = params.getList("param", new ArrayList<String>());
+        this.gameArgs = params.getList("param", new ArrayList<String>());
         this.mainClassName = params.getString("mainClass", "net.minecraft.client.Minecraft");
 
         this.serverAddress = params.getString("serverAddress", null);
@@ -105,8 +104,7 @@ public abstract class AbstractLauncher implements Launcher {
                 }
             }
 
-            throw new ParseException(
-                    String.format("Invalid window size parameters '%s'. Format: [height]x[width]", windowParams));
+            throw new ParseException(windowParams, "[width]x[height]");
         }
     }
 

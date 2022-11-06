@@ -75,7 +75,7 @@ public final class LegacyLauncher extends AbstractLauncher {
     private final String title;
     private final String appletClass;
     private final boolean useApplet;
-    private final String cwd;
+    private final String gameDir;
 
     public LegacyLauncher(Parameters params) {
         super(params);
@@ -88,39 +88,39 @@ public final class LegacyLauncher extends AbstractLauncher {
         List<String> traits = params.getList("traits", Collections.<String>emptyList());
         this.useApplet = !traits.contains("noapplet");
 
-        this.cwd = System.getProperty("user.dir");
+        this.gameDir = System.getProperty("user.dir");
     }
 
     @Override
     public void launch() throws Throwable {
         Class<?> main = ClassLoader.getSystemClassLoader().loadClass(this.mainClassName);
-        Field gameDirField = ReflectionUtils.getMinecraftGameDirField(main);
+        Field gameDirField = ReflectionUtils.findMinecraftGameDirField(main);
 
         if (gameDirField == null)
-            Log.warning("Could not find Minecraft path field");
+            Log.warning("Could not find Minecraft folder field");
         else {
             gameDirField.setAccessible(true);
-            gameDirField.set(null /* field is static, so instance is null */, new File(this.cwd));
+            gameDirField.set(null, new File(this.gameDir));
         }
 
         if (this.useApplet) {
-            System.setProperty("minecraft.applet.TargetDirectory", this.cwd);
-
-            Log.launcher("Launching with applet wrapper...");
+            System.setProperty("minecraft.applet.TargetDirectory", this.gameDir);
 
             try {
                 LegacyFrame window = new LegacyFrame(this.title, ReflectionUtils.createAppletClass(this.appletClass));
 
                 window.start(this.user, this.session, this.width, this.height, this.maximize, this.serverAddress,
-                        this.serverPort, this.mcParams.contains("--demo"));
+                        this.serverPort, this.gameArgs.contains("--demo"));
                 return;
             } catch (Throwable e) {
                 Log.error("Running applet wrapper failed with exception; falling back to main class", e);
             }
         }
 
-        MethodHandle method = ReflectionUtils.findMainEntrypoint(main);
-        method.invokeExact(this.mcParams.toArray(new String[0]));
+        // find and invoke the main method, this time without size parameters
+        // in all versions that support applets, these are ignored
+        MethodHandle method = ReflectionUtils.findMainMethod(main);
+        method.invokeExact(this.gameArgs.toArray(new String[0]));
     }
 
 }

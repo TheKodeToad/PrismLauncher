@@ -42,15 +42,13 @@ package org.prismlauncher.utils.logging;
  */
 public final class Log {
 
-    private static final LogPrintStream ERROR_PREFIX = new LogPrintStream(System.err, Level.ERROR), FATAL_PREFIX = new LogPrintStream(System.err, Level.FATAL);
-
+    private static final LogPrintStream ERROR_PREFIX = new LogPrintStream(System.err, Level.ERROR),
+            FATAL_PREFIX = new LogPrintStream(System.err, Level.FATAL);
+    // use this flag to display debug messages - otherwise the launcher will display
+    // them by default
     private static final boolean DEBUG = Boolean.getBoolean("org.prismlauncher.debug");
 
     private Log() {
-    }
-
-    public static void blankLine() {
-        System.out.println();
     }
 
     public static void launcher(String message) {
@@ -62,14 +60,7 @@ public final class Log {
     }
 
     public static void debug(String message) {
-        if (!DEBUG)
-            return;
-
         log(message, Level.DEBUG);
-    }
-
-    public static void info(String message) {
-        log(message, Level.INFO);
     }
 
     public static void warning(String message) {
@@ -91,12 +82,16 @@ public final class Log {
     }
 
     /**
-     * Logs a message with the prefix !![LEVEL]!.
+     * Logs a message with the prefix <code>!![LEVEL]!</code>. This is picked up by
+     * the log viewer to give it nice colours.
      *
      * @param message The message
      * @param level   The level
      */
     public static void log(String message, Level level) {
+        if (!DEBUG && level == Level.DEBUG)
+            return;
+
         String prefix = "!![" + level.name + "]!";
         // prefix first line
         message = prefix + message;
@@ -108,7 +103,5 @@ public final class Log {
         else
             System.out.println(message);
     }
-
-
 
 }

@@ -55,7 +55,6 @@
 package org.prismlauncher;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
@@ -83,10 +82,9 @@ public final class EntryPoint {
     }
 
     private static PreLaunchAction parseLine(String input, Parameters params) throws ParseException {
-        if (input.isEmpty())
-            return PreLaunchAction.PROCEED;
-
         switch (input) {
+            case "":
+                break;
             case "launch":
                 return PreLaunchAction.LAUNCH;
             case "abort":
@@ -95,19 +93,16 @@ public final class EntryPoint {
                 String[] pair = StringUtils.splitStringPair(' ', input);
 
                 if (pair == null)
-                    throw new ParseException(String.format(
-                            "Could not split input string '%s' by space. All input provided from stdin must be either 'launch', 'abort', or "
-                                    + "in the format '[param name] [param]'.",
-                            input));
+                    throw new ParseException(input, "[key] [value]");
 
                 params.add(pair[0], pair[1]);
-
-                return PreLaunchAction.PROCEED;
         }
+
+        return PreLaunchAction.PROCEED;
     }
 
     private static ExitCode listen() {
-        Parameters parameters = new Parameters();
+        Parameters params = new Parameters();
         PreLaunchAction preLaunchAction = PreLaunchAction.PROCEED;
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8))) {
@@ -115,17 +110,20 @@ public final class EntryPoint {
 
             while (preLaunchAction == PreLaunchAction.PROCEED) {
                 if ((line = reader.readLine()) != null)
-                    preLaunchAction = parseLine(line, parameters);
+                    preLaunchAction = parseLine(line, params);
                 else
                     preLaunchAction = PreLaunchAction.ABORT;
             }
-        } catch (IOException | ParseException e) {
-            Log.fatal("Launcher abort due to exception", e);
+        } catch (IllegalArgumentException e) {
+            Log.fatal("Aborting due to wrong argument", e);
 
             return ExitCode.ILLEGAL_ARGUMENT;
+        } catch (Throwable e) {
+            Log.fatal("Aborting due to exception", e);
+
+            return ExitCode.ABORT;
         }
 
-        // Main loop
         if (preLaunchAction == PreLaunchAction.ABORT) {
             Log.fatal("Launch aborted by the launcher");
 
@@ -134,14 +132,14 @@ public final class EntryPoint {
 
         try {
             Launcher launcher;
-            String type = parameters.getString("launcher");
+            String type = params.getString("launcher");
 
             switch (type) {
                 case "standard":
-                    launcher = new StandardLauncher(parameters);
+                    launcher = new StandardLauncher(params);
                     break;
                 case "legacy":
-                    launcher = new LegacyLauncher(parameters);
+                    launcher = new LegacyLauncher(params);
                     break;
                 default:
                     throw new IllegalArgumentException("Invalid launcher type: " + type);
@@ -151,13 +149,9 @@ public final class EntryPoint {
 
             return ExitCode.NORMAL;
         } catch (IllegalArgumentException e) {
-            Log.fatal("Wrong argument", e);
+            Log.fatal("Illegal argument", e);
 
             return ExitCode.ILLEGAL_ARGUMENT;
-        } catch (ReflectiveOperationException e) {
-            Log.fatal("Caught reflection exception from launcher", e);
-
-            return ExitCode.ERROR;
         } catch (Throwable e) {
             Log.fatal("Exception caught from launcher", e);
 

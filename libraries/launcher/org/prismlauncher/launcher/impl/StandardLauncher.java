@@ -68,27 +68,24 @@ public final class StandardLauncher extends AbstractLauncher {
     @Override
     public void launch() throws Throwable {
         // window size, title and state
-
-        // FIXME: there is no good way to maximize the minecraft window from here.
-        // the following often breaks linux screen setups
-        // mcparams.add("--fullscreen");
-
+        // FIXME doesn't support maximisation
         if (!this.maximize) {
-            this.mcParams.add("--width");
-            this.mcParams.add(Integer.toString(this.width));
-            this.mcParams.add("--height");
-            this.mcParams.add(Integer.toString(this.height));
+            this.gameArgs.add("--width");
+            this.gameArgs.add(Integer.toString(this.width));
+            this.gameArgs.add("--height");
+            this.gameArgs.add(Integer.toString(this.height));
         }
 
         if (this.serverAddress != null) {
-            this.mcParams.add("--server");
-            this.mcParams.add(this.serverAddress);
-            this.mcParams.add("--port");
-            this.mcParams.add(this.serverPort);
+            this.gameArgs.add("--server");
+            this.gameArgs.add(this.serverAddress);
+            this.gameArgs.add("--port");
+            this.gameArgs.add(this.serverPort);
         }
 
+        // find and invoke the main method
         MethodHandle method = ReflectionUtils.findMainMethod(this.mainClassName);
-        method.invokeExact(this.mcParams.toArray(new String[0]));
+        method.invokeExact(this.gameArgs.toArray(new String[0]));
     }
 
 }

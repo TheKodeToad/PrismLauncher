@@ -64,6 +64,8 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.prismlauncher.utils.logging.Log;
+
 /**
  * WARNING: This class is reflectively accessed by legacy Forge versions.
  * <p>
@@ -92,20 +94,20 @@ public final class Launcher extends Applet implements AppletStub {
         this.wrappedApplet = applet;
 
         try {
-            if (documentBase != null) {
-                this.documentBase = documentBase;
-            } else if (applet.getClass().getPackage().getName().startsWith("com.mojang.")) {
-                // Special case only for Classic versions
-
-                // TODO: 2022-10-27 Can this be changed to https
-                this.documentBase = new URL("http", "www.minecraft.net", 80, "/game/");
-            } else {
-                // TODO: 2022-10-27 Can this be changed to https?
-                this.documentBase = new URL("http://www.minecraft.net/game/");
+            if (documentBase == null) {
+                if (applet.getClass().getPackage().getName().startsWith("com.mojang.")) {
+                    // Special case only for Classic versions
+                    documentBase = new URL("http", "www.minecraft.net", 80, "/game/");
+                } else {
+                    documentBase = new URL("http://www.minecraft.net/game/");
+                }
             }
         } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
+            // this should never happen
+            Log.error("Failed to parse document base URL", e);
         }
+
+        this.documentBase = documentBase;
     }
 
     public void replace(Applet applet) {
@@ -139,22 +141,23 @@ public final class Launcher extends Applet implements AppletStub {
     @Override
     public URL getCodeBase() {
         try {
-            // TODO: 2022-10-27 Can this be changed to https?
             return new URL("http://www.minecraft.net/game/");
         } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
+            // this shouldn't happen either
+            Log.error("Failed to parse codebase URL", e);
+            return null;
         }
     }
 
     @Override
-    public String getParameter(String name) {
-        String param = this.params.get(name);
+    public String getParameter(String key) {
+        String param = this.params.get(key);
 
         if (param != null)
             return param;
 
         try {
-            return super.getParameter(name);
+            return super.getParameter(key);
         } catch (Exception ignored) {
         }
 
@@ -216,8 +219,12 @@ public final class Launcher extends Applet implements AppletStub {
     public void update(Graphics graphics) {
     }
 
-    public void setParameter(String name, String value) {
-        this.params.put(name, value);
+    public void setParameter(String key, String value) {
+        this.params.put(key, value);
+    }
+
+    public void setParameter(String key, boolean value) {
+        this.setParameter(key, value ? "true" : "false");
     }
 
 }
