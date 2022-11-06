@@ -86,22 +86,23 @@ public final class EntryPoint {
         if (input.isEmpty())
             return PreLaunchAction.PROCEED;
 
-        if ("launch".equalsIgnoreCase(input))
-            return PreLaunchAction.LAUNCH;
-        else if ("abort".equalsIgnoreCase(input))
-            return PreLaunchAction.ABORT;
-        else {
-            String[] pair = StringUtils.splitStringPair(' ', input);
+        switch (input) {
+            case "launch":
+                return PreLaunchAction.LAUNCH;
+            case "abort":
+                return PreLaunchAction.ABORT;
+            default:
+                String[] pair = StringUtils.splitStringPair(' ', input);
 
-            if (pair == null)
-                throw new ParseException(String.format(
-                        "Could not split input string '%s' by space. All input provided from stdin must be either 'launch', 'abort', or "
-                                + "in the format '[param name] [param]'.",
-                        input));
+                if (pair == null)
+                    throw new ParseException(String.format(
+                            "Could not split input string '%s' by space. All input provided from stdin must be either 'launch', 'abort', or "
+                                    + "in the format '[param name] [param]'.",
+                            input));
 
-            params.add(pair[0], pair[1]);
+                params.add(pair[0], pair[1]);
 
-            return PreLaunchAction.PROCEED;
+                return PreLaunchAction.PROCEED;
         }
     }
 
