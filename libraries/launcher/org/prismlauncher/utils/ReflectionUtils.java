@@ -96,8 +96,7 @@ public final class ReflectionUtils {
     public static Field findMinecraftGameDirField(Class<?> clazz) {
         Log.debug("Resolving minecraft game directory field");
 
-        // we are looking for private static File
-
+        // search for private static File
         for (Field field : clazz.getDeclaredFields()) {
             if (field.getType() != File.class) {
                 continue;

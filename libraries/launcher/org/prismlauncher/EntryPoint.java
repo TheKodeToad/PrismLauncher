@@ -72,12 +72,12 @@ public final class EntryPoint {
     }
 
     public static void main(String[] args) {
-        ExitCode exitCode = listen();
+        ExitCode code = listen();
 
-        if (exitCode != ExitCode.NORMAL) {
-            Log.fatal("Exiting with " + exitCode);
+        if (code != ExitCode.NORMAL) {
+            Log.fatal("Exiting with " + code);
 
-            System.exit(exitCode.numericalCode);
+            System.exit(code.numeric);
         }
     }
 
@@ -103,16 +103,16 @@ public final class EntryPoint {
 
     private static ExitCode listen() {
         Parameters params = new Parameters();
-        PreLaunchAction preLaunchAction = PreLaunchAction.PROCEED;
+        PreLaunchAction action = PreLaunchAction.PROCEED;
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8))) {
             String line;
 
-            while (preLaunchAction == PreLaunchAction.PROCEED) {
+            while (action == PreLaunchAction.PROCEED) {
                 if ((line = reader.readLine()) != null)
-                    preLaunchAction = parseLine(line, params);
+                    action = parseLine(line, params);
                 else
-                    preLaunchAction = PreLaunchAction.ABORT;
+                    action = PreLaunchAction.ABORT;
             }
         } catch (IllegalArgumentException e) {
             Log.fatal("Aborting due to wrong argument", e);
@@ -124,7 +124,7 @@ public final class EntryPoint {
             return ExitCode.ABORT;
         }
 
-        if (preLaunchAction == PreLaunchAction.ABORT) {
+        if (action == PreLaunchAction.ABORT) {
             Log.fatal("Launch aborted by the launcher");
 
             return ExitCode.ABORT;
@@ -166,10 +166,10 @@ public final class EntryPoint {
     private enum ExitCode {
         NORMAL(0), ABORT(1), ERROR(2), ILLEGAL_ARGUMENT(65);
 
-        private final int numericalCode;
+        private final int numeric;
 
-        ExitCode(int numericalCode) {
-            this.numericalCode = numericalCode;
+        ExitCode(int numeric) {
+            this.numeric = numeric;
         }
 
     }
