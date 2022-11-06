@@ -61,8 +61,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * WARNING: This class is reflectively accessed by legacy Forge versions.
@@ -74,7 +74,7 @@ public final class Launcher extends Applet implements AppletStub {
 
     private static final long serialVersionUID = 1L;
 
-    private final Map<String, String> params = new TreeMap<>();
+    private final Map<String, String> params = new HashMap<>();
 
     private Applet wrappedApplet;
     private final URL documentBase;
