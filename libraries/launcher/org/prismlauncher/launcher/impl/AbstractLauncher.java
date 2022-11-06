@@ -86,26 +86,27 @@ public abstract class AbstractLauncher implements Launcher {
 
         String windowParams = params.getString("windowParams", null);
 
-        this.maximize = "max".equalsIgnoreCase(windowParams);
+        if ("max".equals(windowParams) || windowParams == null) {
+            this.maximize = windowParams != null;
 
-        if (windowParams != null && !"max".equalsIgnoreCase(windowParams)) {
+            this.width = DEFAULT_WINDOW_WIDTH;
+            this.height = DEFAULT_WINDOW_HEIGHT;
+        } else {
+            this.maximize = false;
+
             String[] sizePair = StringUtils.splitStringPair('x', windowParams);
 
             if (sizePair != null) {
                 try {
                     this.width = Integer.parseInt(sizePair[0]);
                     this.height = Integer.parseInt(sizePair[1]);
-                } catch (NumberFormatException e) {
-                    throw new ParseException(String.format("Could not parse window parameters from '%s'", windowParams),
-                            e);
+                    return;
+                } catch (NumberFormatException ignored) {
                 }
-            } else {
-                throw new ParseException(
-                        String.format("Invalid window size parameters '%s'. Format: [height]x[width]", windowParams));
             }
-        } else {
-            this.width = DEFAULT_WINDOW_WIDTH;
-            this.height = DEFAULT_WINDOW_HEIGHT;
+
+            throw new ParseException(
+                    String.format("Invalid window size parameters '%s'. Format: [height]x[width]", windowParams));
         }
     }
 
