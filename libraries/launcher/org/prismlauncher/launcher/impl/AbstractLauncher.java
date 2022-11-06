@@ -54,13 +54,13 @@
 
 package org.prismlauncher.launcher.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.prismlauncher.exception.ParseException;
 import org.prismlauncher.launcher.Launcher;
 import org.prismlauncher.utils.Parameters;
 import org.prismlauncher.utils.StringUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class AbstractLauncher implements Launcher {
 

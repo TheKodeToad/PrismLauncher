@@ -54,12 +54,12 @@
 
 package org.prismlauncher.utils;
 
-import org.prismlauncher.exception.ParameterNotFoundException;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.prismlauncher.exception.ParameterNotFoundException;
 
 public final class Parameters {
 

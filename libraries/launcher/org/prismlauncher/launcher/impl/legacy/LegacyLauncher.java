@@ -55,16 +55,16 @@
 
 package org.prismlauncher.launcher.impl.legacy;
 
-import org.prismlauncher.launcher.impl.AbstractLauncher;
-import org.prismlauncher.utils.Parameters;
-import org.prismlauncher.utils.ReflectionUtils;
-import org.prismlauncher.utils.logging.Log;
-
 import java.io.File;
 import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.List;
+
+import org.prismlauncher.launcher.impl.AbstractLauncher;
+import org.prismlauncher.utils.Parameters;
+import org.prismlauncher.utils.ReflectionUtils;
+import org.prismlauncher.utils.logging.Log;
 
 /**
  * Used to launch old versions that support applets.

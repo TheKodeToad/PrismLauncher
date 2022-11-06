@@ -54,13 +54,6 @@
 
 package org.prismlauncher.launcher.impl.legacy;
 
-import net.minecraft.Launcher;
-
-import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-
-import org.prismlauncher.utils.logging.Log;
-
 import java.applet.Applet;
 import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
@@ -73,6 +66,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+
+import javax.imageio.ImageIO;
+import javax.swing.JFrame;
+
+import org.prismlauncher.utils.logging.Log;
+
+import net.minecraft.Launcher;
 
 public final class LegacyFrame extends JFrame {
 
