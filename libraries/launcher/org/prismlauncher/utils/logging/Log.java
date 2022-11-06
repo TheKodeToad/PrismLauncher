@@ -35,8 +35,6 @@
 
 package org.prismlauncher.utils.logging;
 
-import java.io.PrintStream;
-
 /**
  * Used to print messages with different levels used to colourise the output.
  * Used instead of a logging framework, as the launcher knows how to parse these
@@ -44,27 +42,7 @@ import java.io.PrintStream;
  */
 public final class Log {
 
-    private static final PrintStream ERROR_PREFIX = new PrintStream(System.err) {
-        @Override
-        public void println(String x) {
-            error(x);
-        }
-
-        @Override
-        public void println(Object x) {
-            error(String.valueOf(x));
-        }
-    }, FATAL_PREFIX = new PrintStream(System.err) {
-        @Override
-        public void println(String x) {
-            fatal(x);
-        }
-
-        @Override
-        public void println(Object x) {
-            fatal(String.valueOf(x));
-        }
-    };
+    private static final LogPrintStream ERROR_PREFIX = new LogPrintStream(System.err, Level.ERROR), FATAL_PREFIX = new LogPrintStream(System.err, Level.FATAL);
 
     private static final boolean DEBUG = Boolean.getBoolean("org.prismlauncher.debug");
 
@@ -130,5 +108,7 @@ public final class Log {
         else
             System.out.println(message);
     }
+
+
 
 }
