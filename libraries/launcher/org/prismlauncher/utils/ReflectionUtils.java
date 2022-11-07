@@ -69,9 +69,6 @@ public final class ReflectionUtils {
     private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
     private static final ClassLoader LOADER = ClassLoader.getSystemClassLoader();
 
-    private ReflectionUtils() {
-    }
-
     /**
      * Construct a Java applet by its class name.
      *

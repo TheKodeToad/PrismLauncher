@@ -50,9 +50,6 @@ public final class Log {
             FATAL_PREFIX = new LogPrintStream(System.err, Level.FATAL);
     private static final boolean DEBUG = Boolean.getBoolean("org.prismlauncher.debug");
 
-    private Log() {
-    }
-
     public static void launcher(String message) {
         log(message, Level.LAUNCHER);
     }

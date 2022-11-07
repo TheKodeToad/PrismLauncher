@@ -68,9 +68,6 @@ import org.prismlauncher.utils.logging.Log;
 
 public final class EntryPoint {
 
-    private EntryPoint() {
-    }
-
     public static void main(String[] args) {
         ExitCode code = listen();
 
@@ -79,26 +76,6 @@ public final class EntryPoint {
 
             System.exit(code.numeric);
         }
-    }
-
-    private static PreLaunchAction parseLine(String input, Parameters params) throws ParseException {
-        switch (input) {
-            case "":
-                break;
-            case "launch":
-                return PreLaunchAction.LAUNCH;
-            case "abort":
-                return PreLaunchAction.ABORT;
-            default:
-                String[] pair = StringUtils.splitStringPair(' ', input);
-
-                if (pair == null)
-                    throw new ParseException(input, "[key] [value]");
-
-                params.add(pair[0], pair[1]);
-        }
-
-        return PreLaunchAction.PROCEED;
     }
 
     private static ExitCode listen() {
@@ -157,6 +134,26 @@ public final class EntryPoint {
 
             return ExitCode.ERROR;
         }
+    }
+
+    private static PreLaunchAction parseLine(String input, Parameters params) throws ParseException {
+        switch (input) {
+            case "":
+                break;
+            case "launch":
+                return PreLaunchAction.LAUNCH;
+            case "abort":
+                return PreLaunchAction.ABORT;
+            default:
+                String[] pair = StringUtils.splitStringPair(' ', input);
+
+                if (pair == null)
+                    throw new ParseException(input, "[key] [value]");
+
+                params.add(pair[0], pair[1]);
+        }
+
+        return PreLaunchAction.PROCEED;
     }
 
     private enum PreLaunchAction {

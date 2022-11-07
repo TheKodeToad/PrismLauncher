@@ -37,9 +37,6 @@ package org.prismlauncher.utils;
 
 public final class StringUtils {
 
-    private StringUtils() {
-    }
-
     public static String[] splitStringPair(char splitChar, String str) {
         int splitPoint = str.indexOf(splitChar);
 
