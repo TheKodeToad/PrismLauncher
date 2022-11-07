@@ -103,7 +103,7 @@ public final class Launcher extends Applet implements AppletStub {
                 }
             }
         } catch (MalformedURLException e) {
-            // this should never happen
+            // handle gracefully - it won't happen, but Java requires that it is caught
             Log.error("Failed to parse document base URL", e);
         }
 
@@ -143,7 +143,6 @@ public final class Launcher extends Applet implements AppletStub {
         try {
             return new URL("http://www.minecraft.net/game/");
         } catch (MalformedURLException e) {
-            // this shouldn't happen either
             Log.error("Failed to parse codebase URL", e);
             return null;
         }
@@ -158,7 +157,8 @@ public final class Launcher extends Applet implements AppletStub {
 
         try {
             return super.getParameter(key);
-        } catch (Exception ignored) {
+        } catch (Throwable e) {
+            Log.error("Could not get applet parameter", e);
         }
 
         return null;
