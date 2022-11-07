@@ -115,9 +115,11 @@ public final class EntryPoint {
                 case "standard":
                     launcher = new StandardLauncher(params);
                     break;
+
                 case "legacy":
                     launcher = new LegacyLauncher(params);
                     break;
+
                 default:
                     throw new IllegalArgumentException("Invalid launcher type: " + type);
             }
