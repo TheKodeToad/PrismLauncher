@@ -69,23 +69,23 @@ public final class StandardLauncher extends AbstractLauncher {
     public void launch() throws Throwable {
         // window size, title and state
         // FIXME doesn't support maximisation
-        if (!this.maximize) {
-            this.gameArgs.add("--width");
-            this.gameArgs.add(Integer.toString(this.width));
-            this.gameArgs.add("--height");
-            this.gameArgs.add(Integer.toString(this.height));
+        if (!maximize) {
+            gameArgs.add("--width");
+            gameArgs.add(Integer.toString(width));
+            gameArgs.add("--height");
+            gameArgs.add(Integer.toString(height));
         }
 
-        if (this.serverAddress != null) {
-            this.gameArgs.add("--server");
-            this.gameArgs.add(this.serverAddress);
-            this.gameArgs.add("--port");
-            this.gameArgs.add(this.serverPort);
+        if (serverAddress != null) {
+            gameArgs.add("--server");
+            gameArgs.add(serverAddress);
+            gameArgs.add("--port");
+            gameArgs.add(serverPort);
         }
 
         // find and invoke the main method
-        MethodHandle method = ReflectionUtils.findMainMethod(this.mainClassName);
-        method.invokeExact(this.gameArgs.toArray(new String[0]));
+        MethodHandle method = ReflectionUtils.findMainMethod(mainClassName);
+        method.invokeExact(gameArgs.toArray(new String[0]));
     }
 
 }

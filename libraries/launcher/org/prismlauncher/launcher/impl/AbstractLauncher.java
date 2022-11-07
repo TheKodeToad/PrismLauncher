@@ -77,28 +77,28 @@ public abstract class AbstractLauncher implements Launcher {
     protected final String mainClassName;
 
     protected AbstractLauncher(Parameters params) {
-        this.gameArgs = params.getList("param", new ArrayList<String>());
-        this.mainClassName = params.getString("mainClass", "net.minecraft.client.Minecraft");
+        gameArgs = params.getList("param", new ArrayList<String>());
+        mainClassName = params.getString("mainClass", "net.minecraft.client.Minecraft");
 
-        this.serverAddress = params.getString("serverAddress", null);
-        this.serverPort = params.getString("serverPort", null);
+        serverAddress = params.getString("serverAddress", null);
+        serverPort = params.getString("serverPort", null);
 
         String windowParams = params.getString("windowParams", null);
 
         if ("max".equals(windowParams) || windowParams == null) {
-            this.maximize = windowParams != null;
+            maximize = windowParams != null;
 
-            this.width = DEFAULT_WINDOW_WIDTH;
-            this.height = DEFAULT_WINDOW_HEIGHT;
+            width = DEFAULT_WINDOW_WIDTH;
+            height = DEFAULT_WINDOW_HEIGHT;
         } else {
-            this.maximize = false;
+            maximize = false;
 
             String[] sizePair = StringUtils.splitStringPair('x', windowParams);
 
             if (sizePair != null) {
                 try {
-                    this.width = Integer.parseInt(sizePair[0]);
-                    this.height = Integer.parseInt(sizePair[1]);
+                    width = Integer.parseInt(sizePair[0]);
+                    height = Integer.parseInt(sizePair[1]);
                     return;
                 } catch (NumberFormatException ignored) {
                 }

@@ -80,37 +80,37 @@ public final class LegacyLauncher extends AbstractLauncher {
     public LegacyLauncher(Parameters params) {
         super(params);
 
-        this.user = params.getString("userName");
-        this.session = params.getString("sessionId");
-        this.title = params.getString("windowTitle", "Minecraft");
-        this.appletClass = params.getString("appletClass", "net.minecraft.client.MinecraftApplet");
+        user = params.getString("userName");
+        session = params.getString("sessionId");
+        title = params.getString("windowTitle", "Minecraft");
+        appletClass = params.getString("appletClass", "net.minecraft.client.MinecraftApplet");
 
         List<String> traits = params.getList("traits", Collections.<String>emptyList());
-        this.useApplet = !traits.contains("noapplet");
+        useApplet = !traits.contains("noapplet");
 
-        this.gameDir = System.getProperty("user.dir");
+        gameDir = System.getProperty("user.dir");
     }
 
     @Override
     public void launch() throws Throwable {
-        Class<?> main = ClassLoader.getSystemClassLoader().loadClass(this.mainClassName);
+        Class<?> main = ClassLoader.getSystemClassLoader().loadClass(mainClassName);
         Field gameDirField = ReflectionUtils.findMinecraftGameDirField(main);
 
         if (gameDirField == null)
             Log.warning("Could not find Minecraft folder field");
         else {
             gameDirField.setAccessible(true);
-            gameDirField.set(null, new File(this.gameDir));
+            gameDirField.set(null, new File(gameDir));
         }
 
-        if (this.useApplet) {
-            System.setProperty("minecraft.applet.TargetDirectory", this.gameDir);
+        if (useApplet) {
+            System.setProperty("minecraft.applet.TargetDirectory", gameDir);
 
             try {
-                LegacyFrame window = new LegacyFrame(this.title, ReflectionUtils.createAppletClass(this.appletClass));
+                LegacyFrame window = new LegacyFrame(title, ReflectionUtils.createAppletClass(appletClass));
 
-                window.start(this.user, this.session, this.width, this.height, this.maximize, this.serverAddress,
-                        this.serverPort, this.gameArgs.contains("--demo"));
+                window.start(user, session, width, height, maximize, serverAddress,
+                        serverPort, gameArgs.contains("--demo"));
                 return;
             } catch (Throwable e) {
                 Log.error("Running applet wrapper failed with exception; falling back to main class", e);
@@ -120,7 +120,7 @@ public final class LegacyLauncher extends AbstractLauncher {
         // find and invoke the main method, this time without size parameters
         // in all versions that support applets, these are ignored
         MethodHandle method = ReflectionUtils.findMainMethod(main);
-        method.invokeExact(this.gameArgs.toArray(new String[0]));
+        method.invokeExact(gameArgs.toArray(new String[0]));
     }
 
 }

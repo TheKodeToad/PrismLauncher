@@ -140,10 +140,13 @@ public final class EntryPoint {
         switch (input) {
             case "":
                 break;
+
             case "launch":
                 return PreLaunchAction.LAUNCH;
+
             case "abort":
                 return PreLaunchAction.ABORT;
+
             default:
                 String[] pair = StringUtils.splitStringPair(' ', input);
 

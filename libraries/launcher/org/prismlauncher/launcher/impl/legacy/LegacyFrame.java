@@ -83,17 +83,17 @@ public final class LegacyFrame extends JFrame {
     public LegacyFrame(String title, Applet applet) {
         super(title);
 
-        this.launcher = new Launcher(applet);
+        launcher = new Launcher(applet);
 
-        applet.setStub(this.launcher);
+        applet.setStub(launcher);
 
         try {
-            this.setIconImage(ImageIO.read(new File("icon.png")));
+            setIconImage(ImageIO.read(new File("icon.png")));
         } catch (IOException e) {
             Log.error("Failed to read window icon", e);
         }
 
-        this.addWindowListener(new ForceExitHandler());
+        addWindowListener(new ForceExitHandler());
     }
 
     public void start(String user, String session, int width, int height, boolean maximize, String serverAddress,
@@ -115,9 +115,9 @@ public final class LegacyFrame extends JFrame {
                     Log.warning("mpticket file is corrupted");
                 } else {
                     // Assumes parameters are valid and in the correct order
-                    this.launcher.setParameter("server", lines.get(0));
-                    this.launcher.setParameter("port", lines.get(1));
-                    this.launcher.setParameter("mppass", lines.get(2));
+                    launcher.setParameter("server", lines.get(0));
+                    launcher.setParameter("port", lines.get(1));
+                    launcher.setParameter("mppass", lines.get(2));
                 }
             } catch (IOException e) {
                 Log.error("Failed to read mpticket file", e);
@@ -125,35 +125,35 @@ public final class LegacyFrame extends JFrame {
         }
 
         if (serverAddress != null) {
-            this.launcher.setParameter("server", serverAddress);
-            this.launcher.setParameter("port", serverPort);
+            launcher.setParameter("server", serverAddress);
+            launcher.setParameter("port", serverPort);
         }
 
-        this.launcher.setParameter("username", user);
-        this.launcher.setParameter("sessionid", session);
-        this.launcher.setParameter("stand-alone", true); // Show the quit button. TODO: why won't this work?
-        this.launcher.setParameter("haspaid", true); // Some old versions need this for world saves to work.
-        this.launcher.setParameter("demo", demo);
-        this.launcher.setParameter("fullscreen", false);
+        launcher.setParameter("username", user);
+        launcher.setParameter("sessionid", session);
+        launcher.setParameter("stand-alone", true); // Show the quit button. TODO: why won't this work?
+        launcher.setParameter("haspaid", true); // Some old versions need this for world saves to work.
+        launcher.setParameter("demo", demo);
+        launcher.setParameter("fullscreen", false);
 
-        this.add(this.launcher);
+        add(launcher);
 
-        this.launcher.setPreferredSize(new Dimension(width, height));
+        launcher.setPreferredSize(new Dimension(width, height));
 
-        this.pack();
+        pack();
 
-        this.setLocationRelativeTo(null);
-        this.setResizable(true);
+        setLocationRelativeTo(null);
+        setResizable(true);
 
         if (maximize)
-            this.setExtendedState(MAXIMIZED_BOTH);
+            setExtendedState(MAXIMIZED_BOTH);
 
-        this.validate();
+        validate();
 
-        this.launcher.init();
-        this.launcher.start();
+        launcher.init();
+        launcher.start();
 
-        this.setVisible(true);
+        setVisible(true);
     }
 
     private final class ForceExitHandler extends WindowAdapter {
@@ -176,9 +176,9 @@ public final class LegacyFrame extends JFrame {
                 }
             }).start();
 
-            if (LegacyFrame.this.launcher != null) {
-                LegacyFrame.this.launcher.stop();
-                LegacyFrame.this.launcher.destroy();
+            if (launcher != null) {
+                launcher.stop();
+                launcher.destroy();
             }
 
             // old minecraft versions can hang without this >_<
