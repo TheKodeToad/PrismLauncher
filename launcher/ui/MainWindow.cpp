@@ -232,7 +232,7 @@ public:
     TranslatedAction actionChangeInstGroup;
     TranslatedAction actionChangeInstIcon;
     TranslatedAction actionEditInstance;
-    TranslatedAction actionViewSelectedInstFolder;
+    TranslatedAction actionViewInstanceFolder;
     TranslatedAction actionDeleteInstance;
     TranslatedAction actionCAT;
     TranslatedAction actionCopyInstance;
@@ -246,7 +246,7 @@ public:
 
     QMenu * foldersMenu = nullptr;
     TranslatedToolButton foldersMenuButton;
-    TranslatedAction actionViewInstanceFolder;
+    TranslatedAction actionViewInstancesFolder;
     TranslatedAction actionViewCentralModsFolder;
 
     QMenu * editMenu = nullptr;
@@ -301,12 +301,12 @@ public:
         actionAddInstance->setShortcut(QKeySequence::New);
         all_actions.append(&actionAddInstance);
 
-        actionViewInstanceFolder = TranslatedAction(MainWindow);
-        actionViewInstanceFolder->setObjectName(QStringLiteral("actionViewInstanceFolder"));
-        actionViewInstanceFolder->setIcon(APPLICATION->getThemedIcon("viewfolder"));
-        actionViewInstanceFolder.setTextId(QT_TRANSLATE_NOOP("MainWindow", "&View Instance Folder"));
-        actionViewInstanceFolder.setTooltipId(QT_TRANSLATE_NOOP("MainWindow", "Open the instance folder in a file browser."));
-        all_actions.append(&actionViewInstanceFolder);
+        actionViewInstancesFolder = TranslatedAction(MainWindow);
+        actionViewInstancesFolder->setObjectName(QStringLiteral("actionViewInstancesFolder"));
+        actionViewInstancesFolder->setIcon(APPLICATION->getThemedIcon("viewfolder"));
+        actionViewInstancesFolder.setTextId(QT_TRANSLATE_NOOP("MainWindow", "&View Instances Folder"));
+        actionViewInstancesFolder.setTooltipId(QT_TRANSLATE_NOOP("MainWindow", "Open the instances folder in a file browser."));
+        all_actions.append(&actionViewInstancesFolder);
 
         actionViewCentralModsFolder = TranslatedAction(MainWindow);
         actionViewCentralModsFolder->setObjectName(QStringLiteral("actionViewCentralModsFolder"));
@@ -319,7 +319,7 @@ public:
         foldersMenu->setTitle(tr("F&olders"));
         foldersMenu->setToolTipsVisible(true);
 
-        foldersMenu->addAction(actionViewInstanceFolder);
+        foldersMenu->addAction(actionViewInstancesFolder);
         foldersMenu->addAction(actionViewCentralModsFolder);
 
         foldersMenuButton = TranslatedToolButton(MainWindow);
@@ -533,7 +533,7 @@ public:
         fileMenu->addSeparator();
         fileMenu->addAction(actionEditInstance);
         fileMenu->addAction(actionChangeInstGroup);
-        fileMenu->addAction(actionViewSelectedInstFolder);
+        fileMenu->addAction(actionViewInstanceFolder);
         fileMenu->addAction(actionExportInstance);
         fileMenu->addAction(actionDeleteInstance);
         fileMenu->addAction(actionCopyInstance);
@@ -613,10 +613,11 @@ public:
     {
         actionEditInstance->setEnabled(enabled);
         actionChangeInstGroup->setEnabled(enabled);
-        actionViewSelectedInstFolder->setEnabled(enabled);
+        actionViewInstanceFolder->setEnabled(enabled);
         actionExportInstance->setEnabled(enabled);
         actionDeleteInstance->setEnabled(enabled);
         actionCopyInstance->setEnabled(enabled);
+        actionViewInstanceFolder->setEnabled(enabled);
     }
 
     void createStatusBar(QMainWindow *MainWindow)
@@ -723,12 +724,12 @@ public:
         actionChangeInstGroup->setIcon(APPLICATION->getThemedIcon("tag"));
         all_actions.append(&actionChangeInstGroup);
 
-        actionViewSelectedInstFolder = TranslatedAction(MainWindow);
-        actionViewSelectedInstFolder->setObjectName(QStringLiteral("actionViewSelectedInstFolder"));
-        actionViewSelectedInstFolder.setTextId(QT_TRANSLATE_NOOP("MainWindow", "&Folder"));
-        actionViewSelectedInstFolder.setTooltipId(QT_TRANSLATE_NOOP("MainWindow", "Open the selected instance's root folder in a file browser."));
-        actionViewSelectedInstFolder->setIcon(APPLICATION->getThemedIcon("viewfolder"));
-        all_actions.append(&actionViewSelectedInstFolder);
+        actionViewInstanceFolder = TranslatedAction(MainWindow);
+        actionViewInstanceFolder->setObjectName(QStringLiteral("actionViewInstanceFolder"));
+        actionViewInstanceFolder.setTextId(QT_TRANSLATE_NOOP("MainWindow", "&Folder"));
+        actionViewInstanceFolder.setTooltipId(QT_TRANSLATE_NOOP("MainWindow", "Open the selected instance's root folder in a file browser."));
+        actionViewInstanceFolder->setIcon(APPLICATION->getThemedIcon("viewfolder"));
+        all_actions.append(&actionViewInstanceFolder);
 
         actionExportInstance = TranslatedAction(MainWindow);
         actionExportInstance->setObjectName(QStringLiteral("actionExportInstance"));
@@ -787,7 +788,7 @@ public:
         instanceToolBar->addAction(actionEditInstance);
         instanceToolBar->addAction(actionChangeInstGroup);
 
-        instanceToolBar->addAction(actionViewSelectedInstFolder);
+        instanceToolBar->addAction(actionViewInstanceFolder);
 
         instanceToolBar->addAction(actionExportInstance);
         instanceToolBar->addAction(actionCopyInstance);
@@ -840,6 +841,40 @@ public:
         createStatusBar(MainWindow);
         createNewsToolbar(MainWindow);
         createInstanceToolbar(MainWindow);
+
+        QToolButton *folderButton = dynamic_cast<QToolButton*>(instanceToolBar->widgetForAction(actionViewInstanceFolder));
+        QMenu* instanceFoldersMenu = new QMenu(MainWindow);
+
+        QAction* instanceFolder = instanceFoldersMenu->addAction(tr("&Instance"));
+        connect(instanceFolder, &QAction::triggered, [MainWindow] { MainWindow->on_actionViewInstanceFolder_triggered(); });
+
+        QAction* minecraftFolder = instanceFoldersMenu->addAction(tr("&Minecraft"));
+        connect(minecraftFolder, &QAction::triggered, [MainWindow] {
+            if (MainWindow->m_selectedInstance) {
+                QString str = MainWindow->m_selectedInstance->gameRoot();
+
+                if (!FS::ensureFolderPathExists(str))
+                    return;
+
+                DesktopServices::openDirectory(QDir(str).absolutePath());
+            }
+        });
+
+        QAction* configFolder = instanceFoldersMenu->addAction(tr("&Config"));
+        connect(configFolder, &QAction::triggered, [MainWindow] {
+            if (MainWindow->m_selectedInstance) {
+                QString str = MainWindow->m_selectedInstance->instanceConfigFolder();
+
+                if (!FS::ensureFolderPathExists(str))
+                    return;
+
+                DesktopServices::openDirectory(QDir(str).absolutePath());
+            }
+        });
+
+        folderButton->setPopupMode(QToolButton::MenuButtonPopup);
+        folderButton->setMenu(instanceFoldersMenu);
+        actionViewInstanceFolder->setMenu(instanceFoldersMenu);
 
         MainWindow->updateToolsMenu();
 
@@ -1810,20 +1845,28 @@ void MainWindow::undoTrashInstance()
     ui->actionUndoTrashInstance->setEnabled(APPLICATION->instances()->trashedSomething());
 }
 
-void MainWindow::on_actionViewInstanceFolder_triggered()
+void MainWindow::on_actionViewInstancesFolder_triggered()
 {
     QString str = APPLICATION->settings()->get("InstanceDir").toString();
     DesktopServices::openDirectory(str);
 }
 
-void MainWindow::refreshInstances()
-{
-    APPLICATION->instances()->loadList();
-}
-
 void MainWindow::on_actionViewCentralModsFolder_triggered()
 {
     DesktopServices::openDirectory(APPLICATION->settings()->get("CentralModsDir").toString(), true);
+}
+
+void MainWindow::on_actionViewInstanceFolder_triggered()
+{
+    if (m_selectedInstance) {
+        QString str = m_selectedInstance->instanceRoot();
+        DesktopServices::openDirectory(QDir(str).absolutePath());
+    }
+}
+
+void MainWindow::refreshInstances()
+{
+    APPLICATION->instances()->loadList();
 }
 
 void MainWindow::checkForUpdates()
@@ -1970,15 +2013,6 @@ void MainWindow::on_actionRenameInstance_triggered()
     if (m_selectedInstance)
     {
         view->edit(view->currentIndex());
-    }
-}
-
-void MainWindow::on_actionViewSelectedInstFolder_triggered()
-{
-    if (m_selectedInstance)
-    {
-        QString str = m_selectedInstance->instanceRoot();
-        DesktopServices::openDirectory(QDir(str).absolutePath());
     }
 }
 

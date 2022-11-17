@@ -1642,9 +1642,9 @@ void Application::populateLaunchMenu(InstancePtr instance, QMenu* menu)
         normalLaunchOffline->setEnabled(instance->canLaunch());
         normalLaunchDemo->setEnabled(instance->canLaunch());
 
-        connect(normalLaunch, &QAction::triggered, [this, instance]() { launch(instance, true, false); });
-        connect(normalLaunchOffline, &QAction::triggered, [this, instance]() { launch(instance, false, false); });
-        connect(normalLaunchDemo, &QAction::triggered, [this, instance]() { launch(instance, false, true); });
+        connect(normalLaunch, &QAction::triggered, [this, instance] { launch(instance, true, false); });
+        connect(normalLaunchOffline, &QAction::triggered, [this, instance] { launch(instance, false, false); });
+        connect(normalLaunchDemo, &QAction::triggered, [this, instance] { launch(instance, false, true); });
     } else {
         normalLaunch->setDisabled(true);
         normalLaunchOffline->setDisabled(true);

@@ -2,6 +2,7 @@
 /*
  *  PolyMC - Minecraft Launcher
  *  Copyright (C) 2022 Sefa Eyeoglu <contact@scrumplex.net>
+ *  Copyright (C) 2022 TheKodeToad <TheKodeToad@proton.me>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -110,13 +111,12 @@ private slots:
         on_actionChangeInstIcon_triggered();
     }
 
+    void on_actionViewInstancesFolder_triggered();
+    void on_actionViewCentralModsFolder_triggered();
+
     void on_actionViewInstanceFolder_triggered();
 
-    void on_actionViewSelectedInstFolder_triggered();
-
     void refreshInstances();
-
-    void on_actionViewCentralModsFolder_triggered();
 
     void checkForUpdates();
 
