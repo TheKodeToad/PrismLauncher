@@ -4,6 +4,7 @@
  *  Copyright (C) 2022 Sefa Eyeoglu <contact@scrumplex.net>
  *  Copyright (C) 2022 Lenny McLennington <lenny@sneed.church>
  *  Copyright (C) 2022 Tayou <tayou@gmx.net>
+ *  Copyright (C) 2022 TheKodeToad <TheKodeToad@proton.me>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,9 +19,27 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * This file incorporates work covered by the following copyright and
- * permission notice:
+ * permission notices:
  *
  *      Copyright 2013-2021 MultiMC Contributors
+ *
+ *      Licensed under the Apache License, Version 2.0 (the "License");
+ *      you may not use this file except in compliance with the License.
+ *      You may obtain a copy of the License at
+ *
+ *          http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *      Unless required by applicable law or agreed to in writing, software
+ *      distributed under the License is distributed on an "AS IS" BASIS,
+ *      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *      See the License for the specific language governing permissions and
+ *      limitations under the License.
+ *
+ *      Copyright 2013-2021 MultiMC Contributors
+ *
+ *      Authors: Andrew Okin
+ *               Peterix
+ *               Orochimarufan <orochimarufan.x3@gmail.com>
  *
  *      Licensed under the Apache License, Version 2.0 (the "License");
  *      you may not use this file except in compliance with the License.
@@ -90,6 +109,7 @@
 #include <QIcon>
 
 #include "InstanceList.h"
+#include "minecraft/MinecraftInstance.h"
 
 #include <minecraft/auth/AccountList.h>
 #include "icons/IconList.h"
@@ -1604,4 +1624,61 @@ int Application::suitableMaxMem()
         maxMemoryAlloc = 4096;
 
     return maxMemoryAlloc;
+}
+
+void Application::populateLaunchMenu(InstancePtr instance, QMenu* menu)
+{
+    QAction* normalLaunch = menu->addAction(tr("Launch"));
+    normalLaunch->setShortcut(QKeySequence::Open);
+
+    QAction* normalLaunchOffline = menu->addAction(tr("Launch Offline"));
+    normalLaunchOffline->setShortcut(QKeySequence(tr("Ctrl+Shift+O")));
+
+    QAction* normalLaunchDemo = menu->addAction(tr("Launch Demo"));
+    normalLaunchDemo->setShortcut(QKeySequence(tr("Ctrl+Alt+O")));
+
+    if (instance) {
+        normalLaunch->setEnabled(instance->canLaunch());
+        normalLaunchOffline->setEnabled(instance->canLaunch());
+        normalLaunchDemo->setEnabled(instance->canLaunch());
+
+        connect(normalLaunch, &QAction::triggered, [this, instance]() { launch(instance, true, false); });
+        connect(normalLaunchOffline, &QAction::triggered, [this, instance]() { launch(instance, false, false); });
+        connect(normalLaunchDemo, &QAction::triggered, [this, instance]() { launch(instance, false, true); });
+    } else {
+        normalLaunch->setDisabled(true);
+        normalLaunchOffline->setDisabled(true);
+        normalLaunchDemo->setDisabled(true);
+    }
+
+    // Disable demo-mode if not available.
+    auto mcInstance = dynamic_cast<MinecraftInstance*>(instance.get());
+    if (mcInstance) {
+        normalLaunchDemo->setEnabled(mcInstance->supportsDemo());
+    }
+
+    QString profilersTitle = tr("Profilers");
+    menu->addSeparator()->setText(profilersTitle);
+    for (auto profiler : APPLICATION->profilers().values()) {
+        QAction* profilerAction = menu->addAction(profiler->name());
+        QAction* profilerOfflineAction = menu->addAction(tr("%1 Offline").arg(profiler->name()));
+        QString error;
+        if (!profiler->check(&error)) {
+            profilerAction->setDisabled(true);
+            profilerOfflineAction->setDisabled(true);
+            QString profilerToolTip = tr("Profiler not setup correctly. Go into settings, \"External Tools\".");
+            profilerAction->setToolTip(profilerToolTip);
+            profilerOfflineAction->setToolTip(profilerToolTip);
+        } else if (instance) {
+            profilerAction->setEnabled(instance->canLaunch());
+            profilerOfflineAction->setEnabled(instance->canLaunch());
+
+            connect(profilerAction, &QAction::triggered, [this, instance, profiler]() { launch(instance, true, false, profiler.get()); });
+            connect(profilerOfflineAction, &QAction::triggered,
+                    [this, instance, profiler]() { launch(instance, false, false, profiler.get()); });
+        } else {
+            profilerAction->setDisabled(true);
+            profilerOfflineAction->setDisabled(true);
+        }
+    }
 }

@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /*
- *  PolyMC - Minecraft Launcher
+ *  Prism Launcher - Minecraft Launcher
  *  Copyright (C) 2022 Sefa Eyeoglu <contact@scrumplex.net>
+ *  Copyright (C) 2022 TheKodeToad <TheKodeToad@proton.me>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -37,6 +38,7 @@
 
 #include <QMainWindow>
 #include <QSystemTrayIcon>
+#include <QToolButton>
 
 #include "LaunchController.h"
 #include "launch/LaunchTask.h"
@@ -73,8 +75,6 @@ private
 slots:
     void on_closeButton_clicked();
     void on_btnKillMinecraft_clicked();
-    void on_btnLaunchMinecraftOffline_clicked();
-    void on_btnLaunchMinecraftDemo_clicked();
 
     void instanceLaunchTaskChanged(shared_qobject_ptr<LaunchTask> proc);
     void runningStateChanged(bool running);
@@ -92,7 +92,6 @@ private:
     bool m_doNotSave = false;
     PageContainer *m_container = nullptr;
     QPushButton *m_closeButton = nullptr;
-    QPushButton *m_killButton = nullptr;
-    QPushButton *m_launchOfflineButton = nullptr;
-    QPushButton *m_launchDemoButton = nullptr;
+    // HACK: use QToolButton as a split button
+    QToolButton *m_killButton = nullptr;
 };

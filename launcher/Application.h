@@ -3,6 +3,7 @@
  *  Prism Launcher - Minecraft Launcher
  *  Copyright (C) 2022 Sefa Eyeoglu <contact@scrumplex.net>
  *  Copyright (C) 2022 Tayou <tayou@gmx.net>
+ *  Copyright (C) 2022 TheKodeToad <TheKodeToad@proton.me>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -36,13 +37,16 @@
 
 #pragma once
 
+
 #include <QApplication>
-#include <memory>
+#include <QDateTime>
 #include <QDebug>
 #include <QFlag>
 #include <QIcon>
-#include <QDateTime>
+#include <QMenu>
 #include <QUrl>
+
+#include <memory>
 #include <updater/GoUpdate.h>
 
 #include <BaseInstance.h>
@@ -201,6 +205,8 @@ public:
     void ShowGlobalSettings(class QWidget * parent, QString open_page = QString());
 
     int suitableMaxMem();
+
+    void populateLaunchMenu(InstancePtr instance, QMenu *menu);
 
 signals:
     void updateAllowedChanged(bool status);

@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /*
- *  PolyMC - Minecraft Launcher
+ *  Prism Launcher - Minecraft Launcher
  *  Copyright (C) 2022 Sefa Eyeoglu <contact@scrumplex.net>
+ *  Copyright (C) 2022 TheKodeToad <TheKodeToad@proton.me>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -40,7 +41,7 @@
 #include <QMessageBox>
 #include <QHBoxLayout>
 #include <QPushButton>
-#include <qlayoutitem.h>
+#include <QLayoutItem>
 #include <QCloseEvent>
 
 #include "ui/dialogs/CustomMessageBox.h"
@@ -88,21 +89,12 @@ InstanceWindow::InstanceWindow(InstancePtr instance, QWidget *parent)
         auto spacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
         horizontalLayout->addSpacerItem(spacer);
 
-        m_killButton = new QPushButton();
+        m_killButton = new QToolButton();
+        m_killButton->setMinimumWidth(80);
         horizontalLayout->addWidget(m_killButton);
         connect(m_killButton, SIGNAL(clicked(bool)), SLOT(on_btnKillMinecraft_clicked()));
 
-        m_launchOfflineButton = new QPushButton();
-        horizontalLayout->addWidget(m_launchOfflineButton);
-        m_launchOfflineButton->setText(tr("Launch Offline"));
-
-        m_launchDemoButton = new QPushButton();
-        horizontalLayout->addWidget(m_launchDemoButton);
-        m_launchDemoButton->setText(tr("Launch Demo"));
-
         updateLaunchButtons();
-        connect(m_launchOfflineButton, SIGNAL(clicked(bool)), SLOT(on_btnLaunchMinecraftOffline_clicked()));
-        connect(m_launchDemoButton, SIGNAL(clicked(bool)), SLOT(on_btnLaunchMinecraftDemo_clicked()));
 
         m_closeButton = new QPushButton();
         m_closeButton->setText(tr("Close"));
@@ -146,50 +138,32 @@ void InstanceWindow::on_instanceStatusChanged(BaseInstance::Status, BaseInstance
 
 void InstanceWindow::updateLaunchButtons()
 {
-    if(m_instance->isRunning())
-    {
-        m_launchOfflineButton->setEnabled(false);
-        m_launchDemoButton->setEnabled(false);
+    if (m_instance->isRunning()) {
         m_killButton->setText(tr("Kill"));
         m_killButton->setObjectName("killButton");
         m_killButton->setToolTip(tr("Kill the running instance"));
-    }
-    else if(!m_instance->canLaunch())
-    {
-        m_launchOfflineButton->setEnabled(false);
-        m_launchDemoButton->setEnabled(false);
+        m_killButton->setMenu(nullptr);
+        m_killButton->setPopupMode(QToolButton::DelayedPopup);
+    } else {
         m_killButton->setText(tr("Launch"));
         m_killButton->setObjectName("launchButton");
         m_killButton->setToolTip(tr("Launch the instance"));
-        m_killButton->setEnabled(false);
-    }
-    else
-    {
-        m_launchOfflineButton->setEnabled(true);
+        m_killButton->setEnabled(m_instance->canLaunch());
 
-        // Disable demo-mode if not available.
-        auto instance = dynamic_cast<MinecraftInstance*>(m_instance.get());
-        if (instance) {
-            m_launchDemoButton->setEnabled(instance->supportsDemo());
-        }
+        QMenu* launchMenu = m_killButton->menu();
+        if (launchMenu)
+            launchMenu->clear();
+        else
+            launchMenu = new QMenu(this);  // Hopefully not a memory leak
 
-        m_killButton->setText(tr("Launch"));
-        m_killButton->setObjectName("launchButton");
-        m_killButton->setToolTip(tr("Launch the instance"));
+        m_killButton->setMenu(launchMenu);
+        m_killButton->setPopupMode(QToolButton::MenuButtonPopup);
+
+        APPLICATION->populateLaunchMenu(m_instance, launchMenu);
     }
-    // NOTE: this is a hack to force the button to recalculate its style
+    // FIXME this is a hack to force the button to recalculate its style
     m_killButton->setStyleSheet("/* */");
     m_killButton->setStyleSheet(QString());
-}
-
-void InstanceWindow::on_btnLaunchMinecraftOffline_clicked()
-{
-    APPLICATION->launch(m_instance, false, false, nullptr);
-}
-
-void InstanceWindow::on_btnLaunchMinecraftDemo_clicked()
-{
-    APPLICATION->launch(m_instance, false, true, nullptr);
 }
 
 void InstanceWindow::instanceLaunchTaskChanged(shared_qobject_ptr<LaunchTask> proc)
