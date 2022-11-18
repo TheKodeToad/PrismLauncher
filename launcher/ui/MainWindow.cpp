@@ -546,8 +546,6 @@ public:
         viewMenu = menuBar->addMenu(tr("&View"));
         viewMenu->setSeparatorsCollapsible(false);
         viewMenu->addAction(actionCAT);
-        viewMenu->addSeparator();
-
         viewMenu->addAction(actionLockToolbars);
 
         menuBar->addMenu(foldersMenu);
@@ -575,9 +573,11 @@ public:
             helpMenu->addAction(actionDISCORD);
         if (!BuildConfig.SUBREDDIT_URL.isEmpty())
             helpMenu->addAction(actionREDDIT);
-        helpMenu->addSeparator();
-        if(BuildConfig.UPDATER_ENABLED)
+
+        if (BuildConfig.UPDATER_ENABLED) {
+            helpMenu->addSeparator();
             helpMenu->addAction(actionCheckUpdate);
+        }
 
         MainWindow->setMenuBar(menuBar);
     }

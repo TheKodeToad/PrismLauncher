@@ -45,9 +45,8 @@ class ResourcePackPage : public ExternalResourcesPage
     Q_OBJECT
 public:
     explicit ResourcePackPage(MinecraftInstance *instance, std::shared_ptr<ResourcePackFolderModel> model, QWidget *parent = 0)
-        : ExternalResourcesPage(instance, model, parent)
+        : ExternalResourcesPage(instance, model, false, parent)
     {
-        ui->actionViewConfigs->setVisible(false);
     }
     virtual ~ResourcePackPage() {}
 

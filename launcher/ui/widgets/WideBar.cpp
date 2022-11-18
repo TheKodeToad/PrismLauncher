@@ -81,7 +81,7 @@ auto WideBar::getMatching(QAction* act) -> QList<BarEntry*>::iterator
     auto iter = std::find_if(m_entries.begin(), m_entries.end(), [act](BarEntry * entry) {
         return entry->wideAction == act;
     });
-    
+
     return iter;
 }
 

@@ -46,9 +46,8 @@ class TexturePackPage : public ExternalResourcesPage
     Q_OBJECT
 public:
     explicit TexturePackPage(MinecraftInstance *instance, std::shared_ptr<TexturePackFolderModel> model, QWidget *parent = 0)
-        : ExternalResourcesPage(instance, model, parent)
+        : ExternalResourcesPage(instance, model, false, parent)
     {
-        ui->actionViewConfigs->setVisible(false);
     }
     virtual ~TexturePackPage() {}
 

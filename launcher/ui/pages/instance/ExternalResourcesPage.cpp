@@ -9,14 +9,26 @@
 #include <QKeyEvent>
 #include <QMenu>
 
-ExternalResourcesPage::ExternalResourcesPage(BaseInstance* instance, std::shared_ptr<ResourceFolderModel> model, QWidget* parent)
+ExternalResourcesPage::ExternalResourcesPage(BaseInstance* instance, std::shared_ptr<ResourceFolderModel> model, bool showConfigs, QWidget* parent)
     : QMainWindow(parent), m_instance(instance), ui(new Ui::ExternalResourcesPage), m_model(model)
 {
     ui->setupUi(this);
 
     ExternalResourcesPage::runningStateChanged(m_instance && m_instance->isRunning());
 
-    ui->actionsToolbar->insertSpacer(ui->actionViewConfigs);
+    QAction* spacerBefore = ui->actionViewFolder;
+
+    // add here to allow being hidden
+    if (showConfigs) {
+        QAction* actionViewConfigs = new QAction(this);
+        spacerBefore = actionViewConfigs;
+        actionViewConfigs->setText(tr("View &Configs"));
+        actionViewConfigs->setToolTip(tr("Open the 'config' folder in the system file manager."));
+        ui->actionsToolbar->insertActionBefore(ui->actionViewFolder, actionViewConfigs);
+        connect(actionViewConfigs, &QAction::triggered, this, &ExternalResourcesPage::viewConfigs);
+    }
+
+    ui->actionsToolbar->insertSpacer(spacerBefore);
 
     m_filterModel = model->createFilterProxyModel(this);
     m_filterModel->setDynamicSortFilter(true);
@@ -36,7 +48,6 @@ ExternalResourcesPage::ExternalResourcesPage(BaseInstance* instance, std::shared
     connect(ui->actionRemoveItem, &QAction::triggered, this, &ExternalResourcesPage::removeItem);
     connect(ui->actionEnableItem, &QAction::triggered, this, &ExternalResourcesPage::enableItem);
     connect(ui->actionDisableItem, &QAction::triggered, this, &ExternalResourcesPage::disableItem);
-    connect(ui->actionViewConfigs, &QAction::triggered, this, &ExternalResourcesPage::viewConfigs);
     connect(ui->actionViewFolder, &QAction::triggered, this, &ExternalResourcesPage::viewFolder);
 
     connect(ui->treeView, &ModListView::customContextMenuRequested, this, &ExternalResourcesPage::ShowContextMenu);
@@ -101,7 +112,7 @@ void ExternalResourcesPage::runningStateChanged(bool running)
 {
     if (m_controlsEnabled == !running)
         return;
-    
+
     m_controlsEnabled = !running;
 }
 
@@ -129,7 +140,7 @@ bool ExternalResourcesPage::eventFilter(QObject* obj, QEvent* ev)
 {
     if (ev->type() != QEvent::KeyPress)
         return QWidget::eventFilter(obj, ev);
-    
+
     QKeyEvent* keyEvent = static_cast<QKeyEvent*>(ev);
     if (obj == ui->treeView)
         return listFilter(keyEvent);
@@ -141,7 +152,7 @@ void ExternalResourcesPage::addItem()
 {
     if (!m_controlsEnabled)
         return;
-    
+
 
     auto list = GuiUtil::BrowseForFiles(
         helpPage(), tr("Select %1", "Select whatever type of files the page contains. Example: 'Loader Mods'").arg(displayName()),
@@ -158,7 +169,7 @@ void ExternalResourcesPage::removeItem()
 {
     if (!m_controlsEnabled)
         return;
-    
+
     auto selection = m_filterModel->mapSelectionToSource(ui->treeView->selectionModel()->selection());
     m_model->deleteResources(selection.indexes());
 }

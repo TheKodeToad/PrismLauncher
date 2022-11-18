@@ -84,7 +84,6 @@
    <addaction name="actionRemoveItem"/>
    <addaction name="actionEnableItem"/>
    <addaction name="actionDisableItem"/>
-   <addaction name="actionViewConfigs"/>
    <addaction name="actionViewFolder"/>
   </widget>
   <action name="actionAddItem">
@@ -117,14 +116,6 @@
    </property>
    <property name="toolTip">
     <string>Disable selected item</string>
-   </property>
-  </action>
-  <action name="actionViewConfigs">
-   <property name="text">
-    <string>View &amp;Configs</string>
-   </property>
-   <property name="toolTip">
-    <string>Open the 'config' folder in the system file manager.</string>
    </property>
   </action>
   <action name="actionViewFolder">
