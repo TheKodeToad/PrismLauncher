@@ -142,6 +142,7 @@ void InstanceWindow::updateLaunchButtons()
         m_killButton->setText(tr("Kill"));
         m_killButton->setObjectName("killButton");
         m_killButton->setToolTip(tr("Kill the running instance"));
+
         m_killButton->setMenu(nullptr);
         m_killButton->setPopupMode(QToolButton::DelayedPopup);
     } else {
@@ -154,7 +155,7 @@ void InstanceWindow::updateLaunchButtons()
         if (launchMenu)
             launchMenu->clear();
         else
-            launchMenu = new QMenu(this);  // Hopefully not a memory leak
+            launchMenu = new QMenu(this);
 
         m_killButton->setMenu(launchMenu);
         m_killButton->setPopupMode(QToolButton::MenuButtonPopup);

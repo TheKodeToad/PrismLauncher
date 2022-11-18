@@ -227,7 +227,6 @@ public:
     TranslatedAction actionMoreNews;
     TranslatedAction actionManageAccounts;
     TranslatedAction actionLaunchInstance;
-    TranslatedAction actionKillInstance;
     TranslatedAction actionRenameInstance;
     TranslatedAction actionChangeInstGroup;
     TranslatedAction actionChangeInstIcon;
@@ -528,7 +527,6 @@ public:
         fileMenu->addAction(actionLaunchInstance);
         fileMenu->addAction(actionLaunchInstanceOffline);
         fileMenu->addAction(actionLaunchInstanceDemo);
-        fileMenu->addAction(actionKillInstance);
         fileMenu->addAction(actionCloseWindow);
         fileMenu->addSeparator();
         fileMenu->addAction(actionEditInstance);
@@ -682,9 +680,6 @@ public:
 
         actionLaunchInstance = TranslatedAction(MainWindow);
         actionLaunchInstance->setObjectName(QStringLiteral("actionLaunchInstance"));
-        actionLaunchInstance.setTextId(QT_TRANSLATE_NOOP("MainWindow", "&Launch"));
-        actionLaunchInstance.setTooltipId(QT_TRANSLATE_NOOP("MainWindow", "Launch the selected instance."));
-        actionLaunchInstance->setIcon(APPLICATION->getThemedIcon("launch"));
         all_actions.append(&actionLaunchInstance);
 
         actionLaunchInstanceOffline = TranslatedAction(MainWindow);
@@ -698,15 +693,6 @@ public:
         actionLaunchInstanceDemo.setTextId(QT_TRANSLATE_NOOP("MainWindow", "Launch &Demo"));
         actionLaunchInstanceDemo.setTooltipId(QT_TRANSLATE_NOOP("MainWindow", "Launch the selected instance in demo mode."));
         all_actions.append(&actionLaunchInstanceDemo);
-
-        actionKillInstance = TranslatedAction(MainWindow);
-        actionKillInstance->setObjectName(QStringLiteral("actionKillInstance"));
-        actionKillInstance->setDisabled(true);
-        actionKillInstance.setTextId(QT_TRANSLATE_NOOP("MainWindow", "&Kill"));
-        actionKillInstance.setTooltipId(QT_TRANSLATE_NOOP("MainWindow", "Kill the running instance"));
-        actionKillInstance->setShortcut(QKeySequence(tr("Ctrl+K")));
-        actionKillInstance->setIcon(APPLICATION->getThemedIcon("status-bad"));
-        all_actions.append(&actionKillInstance);
 
         actionEditInstance = TranslatedAction(MainWindow);
         actionEditInstance->setObjectName(QStringLiteral("actionEditInstance"));
@@ -781,9 +767,6 @@ public:
         instanceToolBar->addSeparator();
 
         instanceToolBar->addAction(actionLaunchInstance);
-        instanceToolBar->addAction(actionKillInstance);
-
-        instanceToolBar->addSeparator();
 
         instanceToolBar->addAction(actionEditInstance);
         instanceToolBar->addAction(actionChangeInstGroup);
@@ -1238,23 +1221,36 @@ void MainWindow::updateToolsMenu()
 
     bool currentInstanceRunning = m_selectedInstance && m_selectedInstance->isRunning();
 
-    ui->actionLaunchInstance->setDisabled(!m_selectedInstance || currentInstanceRunning);
-    ui->actionLaunchInstanceOffline->setDisabled(!m_selectedInstance || currentInstanceRunning);
-    ui->actionLaunchInstanceDemo->setDisabled(!m_selectedInstance || currentInstanceRunning);
+    if (currentInstanceRunning) {
+        ui->actionLaunchInstance.setTextId(QT_TRANSLATE_NOOP("MainWindow", "&Kill"));
+        ui->actionLaunchInstance.setTooltipId(QT_TRANSLATE_NOOP("MainWindow", "Kill the running instance"));
+        ui->actionLaunchInstance->setShortcut(QKeySequence(tr("Ctrl+K")));
+        ui->actionLaunchInstance->setIcon(APPLICATION->getThemedIcon("status-bad"));
 
-    QMenu *launchMenu = ui->actionLaunchInstance->menu();
-    launchButton->setPopupMode(QToolButton::MenuButtonPopup);
-    if (launchMenu)
-    {
-        launchMenu->clear();
-    }
-    else
-    {
-        launchMenu = new QMenu(this);
+        ui->actionLaunchInstance->setMenu(nullptr);
+        launchButton->setPopupMode(QToolButton::DelayedPopup);
+    } else {
+        ui->actionLaunchInstance.setTextId(QT_TRANSLATE_NOOP("MainWindow", "&Launch"));
+        ui->actionLaunchInstance.setTooltipId(QT_TRANSLATE_NOOP("MainWindow", "Launch the instance"));
+        ui->actionLaunchInstance->setShortcut({});
+        ui->actionLaunchInstance->setIcon(APPLICATION->getThemedIcon("launch"));
+
+        QMenu *launchMenu = ui->actionLaunchInstance->menu();
+        launchButton->setPopupMode(QToolButton::MenuButtonPopup);
+        if (launchMenu)
+            launchMenu->clear();
+        else
+            launchMenu = new QMenu(this);
+
+        APPLICATION->populateLaunchMenu(m_selectedInstance, launchMenu);
+        ui->actionLaunchInstance->setMenu(launchMenu);
     }
 
-    APPLICATION->populateLaunchMenu(m_selectedInstance, launchMenu);
-    ui->actionLaunchInstance->setMenu(launchMenu);
+    ui->actionLaunchInstance.retranslate();
+
+    ui->actionLaunchInstance->setEnabled(m_selectedInstance && (m_selectedInstance->canLaunch() || m_selectedInstance->isRunning()));
+    ui->actionLaunchInstanceOffline->setEnabled(m_selectedInstance && !currentInstanceRunning);
+    ui->actionLaunchInstanceDemo->setEnabled(m_selectedInstance && !currentInstanceRunning);
 }
 
 void MainWindow::repopulateAccountsMenu()
@@ -2048,9 +2044,11 @@ void MainWindow::instanceActivated(QModelIndex index)
 
 void MainWindow::on_actionLaunchInstance_triggered()
 {
-    if(m_selectedInstance && !m_selectedInstance->isRunning())
-    {
-        APPLICATION->launch(m_selectedInstance);
+    if (m_selectedInstance) {
+        if (m_selectedInstance->isRunning())
+            APPLICATION->kill(m_selectedInstance);
+        else
+            APPLICATION->launch(m_selectedInstance);
     }
 }
 
@@ -2072,14 +2070,6 @@ void MainWindow::on_actionLaunchInstanceDemo_triggered()
     if (m_selectedInstance)
     {
         APPLICATION->launch(m_selectedInstance, false, true);
-    }
-}
-
-void MainWindow::on_actionKillInstance_triggered()
-{
-    if(m_selectedInstance && m_selectedInstance->isRunning())
-    {
-        APPLICATION->kill(m_selectedInstance);
     }
 }
 
@@ -2116,9 +2106,6 @@ void MainWindow::instanceChanged(const QModelIndex &current, const QModelIndex &
     {
         ui->instanceToolBar->setEnabled(true);
         ui->setInstanceActionsEnabled(true);
-        ui->actionLaunchInstance->setEnabled(m_selectedInstance->canLaunch());
-        ui->actionLaunchInstanceOffline->setEnabled(m_selectedInstance->canLaunch());
-        ui->actionLaunchInstanceDemo->setEnabled(m_selectedInstance->canLaunch());
 
         // Disable demo-mode if not available.
         auto instance = dynamic_cast<MinecraftInstance*>(m_selectedInstance.get());
@@ -2126,7 +2113,6 @@ void MainWindow::instanceChanged(const QModelIndex &current, const QModelIndex &
              ui->actionLaunchInstanceDemo->setEnabled(instance->supportsDemo());
         }
 
-        ui->actionKillInstance->setEnabled(m_selectedInstance->isRunning());
         ui->actionExportInstance->setEnabled(m_selectedInstance->canExport());
         ui->renameButton->setText(m_selectedInstance->name());
         m_statusLeft->setText(m_selectedInstance->getStatusbarDescription());
@@ -2146,7 +2132,6 @@ void MainWindow::instanceChanged(const QModelIndex &current, const QModelIndex &
         ui->actionLaunchInstance->setEnabled(false);
         ui->actionLaunchInstanceOffline->setEnabled(false);
         ui->actionLaunchInstanceDemo->setEnabled(false);
-        ui->actionKillInstance->setEnabled(false);
         APPLICATION->settings()->set("SelectedInstance", QString());
         selectionBad();
         return;
