@@ -101,6 +101,8 @@ private:
     void updateButtons(int row = -1);
     void preselect(int row = 0);
     int doUpdate();
+    void fixModLoaderVersions(const QString& gameVersion);
+    void fixModLoaderVersion(const QString& id, const QString& gameVersion);
 
 protected:
     QMenu * createPopupMenu() override;
