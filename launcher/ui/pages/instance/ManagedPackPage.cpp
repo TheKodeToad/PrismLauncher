@@ -1,4 +1,5 @@
 // SPDX-FileCopyrightText: 2022 flow <flowlnlnln@gmail.com>
+// SPDX-FileCopyrightText: 2022 TheKodeToad <TheKodeToad@proton.me>
 //
 // SPDX-License-Identifier: GPL-3.0-only
 
@@ -146,6 +147,18 @@ bool ManagedPackPage::runUpdateTask(InstanceTask* task)
     return task->wasSuccessful();
 }
 
+bool ManagedPackPage::confirmUpdate()
+{
+    auto response = CustomMessageBox::selectable(this, tr("Confirm Update"),
+                                                 tr("About to update: %1\n"
+                                                    "New version: %2\n\n"
+                                                    "Are you sure?")
+                                                     .arg(m_inst->name(), ui->versionsComboBox->currentText()),
+                                                 QMessageBox::Warning, QMessageBox::Yes | QMessageBox::No, QMessageBox::NoButton)
+                        ->exec();
+    return response == QMessageBox::Yes;
+}
+
 void ManagedPackPage::suggestVersion()
 {
     ui->updateButton->setText(tr("Update pack"));
@@ -271,6 +284,9 @@ void ModrinthManagedPackPage::suggestVersion()
 
 void ModrinthManagedPackPage::update()
 {
+    if (!confirmUpdate())
+        return;
+
     auto index = ui->versionsComboBox->currentIndex();
     auto version = m_pack.versions.at(index);
 
@@ -409,6 +425,9 @@ void FlameManagedPackPage::suggestVersion()
 
 void FlameManagedPackPage::update()
 {
+    if (!confirmUpdate())
+        return;
+
     auto index = ui->versionsComboBox->currentIndex();
     auto version = m_pack.versions.at(index);
 

@@ -69,8 +69,7 @@ QString GuiUtil::uploadPaste(const QString &name, const QString &text, QWidget *
                                                                      "Uploading to: %2\n"
                                                                      "You should double-check for personal information.\n\n"
                                                                      "Are you sure?")
-                                                             .arg(name)
-                                                             .arg(baseUrl.host()),
+                                                             .arg(name, baseUrl.host()),
                                                          QMessageBox::Warning, QMessageBox::Yes | QMessageBox::No, QMessageBox::No)
                                 ->exec();
 
