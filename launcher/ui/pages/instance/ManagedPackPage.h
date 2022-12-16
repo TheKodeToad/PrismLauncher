@@ -1,5 +1,4 @@
 // SPDX-FileCopyrightText: 2022 flow <flowlnlnln@gmail.com>
-// SPDX-FileCopyrightText: 2022 TheKodeToad <TheKodeToad@proton.me>
 //
 // SPDX-License-Identifier: GPL-3.0-only
 
@@ -84,8 +83,6 @@ class ManagedPackPage : public QWidget, public BasePage {
      *  Returns whether the task was successful.
      */
     bool runUpdateTask(InstanceTask*);
-
-    bool confirmUpdate();
 
    protected:
     InstanceWindow* m_instance_window = nullptr;
