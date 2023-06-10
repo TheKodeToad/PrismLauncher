@@ -44,6 +44,7 @@
 #include <QIcon>
 #include <QDateTime>
 #include <QUrl>
+#include <QMenu>
 
 #include <BaseInstance.h>
 
@@ -202,6 +203,7 @@ public:
     bool openJsonEditor(const QString &filename);
 
     InstanceWindow *showInstanceWindow(InstancePtr instance, QString page = QString());
+    void populateInstanceLaunchMenu(InstancePtr instance, QMenu *menu);
     MainWindow *showMainWindow(bool minimized = false);
 
     void updateIsRunning(bool running);

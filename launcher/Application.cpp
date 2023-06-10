@@ -44,6 +44,7 @@
 #include "BuildConfig.h"
 
 #include "DataMigrationTask.h"
+#include "minecraft/MinecraftInstance.h"
 #include "net/PasteUpload.h"
 #include "pathmatcher/MultiMatcher.h"
 #include "pathmatcher/SimplePrefixMatcher.h"
@@ -1431,6 +1432,59 @@ InstanceWindow *Application::showInstanceWindow(InstancePtr instance, QString pa
         extras.controller->setParentWidget(window);
     }
     return window;
+}
+
+void Application::populateInstanceLaunchMenu(InstancePtr instance, QMenu *menu) {
+    QAction* normalLaunch = menu->addAction(tr("Launch"));
+    normalLaunch->setShortcut(QKeySequence::Open);
+    QAction* normalLaunchOffline = menu->addAction(tr("Launch Offline"));
+    normalLaunchOffline->setShortcut(QKeySequence(tr("Ctrl+Shift+O")));
+    QAction* normalLaunchDemo = menu->addAction(tr("Launch Demo"));
+    normalLaunchDemo->setShortcut(QKeySequence(tr("Ctrl+Alt+O")));
+    if (instance) {
+        normalLaunch->setEnabled(instance->canLaunch());
+        normalLaunchOffline->setEnabled(instance->canLaunch());
+        normalLaunchDemo->setEnabled(instance->canLaunch());
+
+        connect(normalLaunch, &QAction::triggered, [this, instance]() { launch(instance, true, false); });
+        connect(normalLaunchOffline, &QAction::triggered, [this, instance]() { launch(instance, false, false); });
+        connect(normalLaunchDemo, &QAction::triggered, [this, instance]() { launch(instance, false, true); });
+    } else {
+        normalLaunch->setDisabled(true);
+        normalLaunchOffline->setDisabled(true);
+        normalLaunchDemo->setDisabled(true);
+    }
+
+    // Disable demo-mode if not available.
+    auto mcInstance = dynamic_cast<MinecraftInstance*>(instance.get());
+    if (mcInstance)
+        normalLaunchDemo->setEnabled(mcInstance->supportsDemo());
+
+    QString profilersTitle = tr("Profilers");
+    menu->addSeparator()->setText(profilersTitle);
+    for (auto profiler : APPLICATION->profilers().values()) {
+        QAction* profilerAction = menu->addAction(profiler->name());
+        QAction* profilerOfflineAction = menu->addAction(tr("%1 Offline").arg(profiler->name()));
+        QString error;
+        if (!profiler->check(&error)) {
+            profilerAction->setDisabled(true);
+            profilerOfflineAction->setDisabled(true);
+            QString profilerToolTip = tr("Profiler not setup correctly. Go into settings, \"External Tools\".");
+            profilerAction->setToolTip(profilerToolTip);
+            profilerOfflineAction->setToolTip(profilerToolTip);
+        } else if (instance) {
+            profilerAction->setEnabled(instance->canLaunch());
+            profilerOfflineAction->setEnabled(instance->canLaunch());
+
+            connect(profilerAction, &QAction::triggered,
+                    [this, instance, profiler]() { launch(instance, true, false, profiler.get()); });
+            connect(profilerOfflineAction, &QAction::triggered,
+                    [this, instance, profiler]() { launch(instance, false, false, profiler.get()); });
+        } else {
+            profilerAction->setDisabled(true);
+            profilerOfflineAction->setDisabled(true);
+        }
+    }
 }
 
 void Application::on_windowClose()

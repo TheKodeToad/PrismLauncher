@@ -566,78 +566,10 @@ void MainWindow::updateToolsMenu()
     else
     {
         launchMenu = new QMenu(this);
-    }
-    QAction *normalLaunch = launchMenu->addAction(tr("Launch"));
-    normalLaunch->setShortcut(QKeySequence::Open);
-    QAction *normalLaunchOffline = launchMenu->addAction(tr("Launch Offline"));
-    normalLaunchOffline->setShortcut(QKeySequence(tr("Ctrl+Shift+O")));
-    QAction *normalLaunchDemo = launchMenu->addAction(tr("Launch Demo"));
-    normalLaunchDemo->setShortcut(QKeySequence(tr("Ctrl+Alt+O")));
-    if (m_selectedInstance)
-    {
-        normalLaunch->setEnabled(m_selectedInstance->canLaunch());
-        normalLaunchOffline->setEnabled(m_selectedInstance->canLaunch());
-        normalLaunchDemo->setEnabled(m_selectedInstance->canLaunch());
-
-        connect(normalLaunch, &QAction::triggered, [this]() {
-            APPLICATION->launch(m_selectedInstance, true, false);
-        });
-        connect(normalLaunchOffline, &QAction::triggered, [this]() {
-            APPLICATION->launch(m_selectedInstance, false, false);
-        });
-        connect(normalLaunchDemo, &QAction::triggered, [this]() {
-            APPLICATION->launch(m_selectedInstance, false, true);
-        });
-    }
-    else
-    {
-        normalLaunch->setDisabled(true);
-        normalLaunchOffline->setDisabled(true);
-        normalLaunchDemo->setDisabled(true);
+        ui->actionLaunchInstance->setMenu(launchMenu);
     }
 
-    // Disable demo-mode if not available.
-    auto instance = dynamic_cast<MinecraftInstance*>(m_selectedInstance.get());
-    if (instance) {
-        normalLaunchDemo->setEnabled(instance->supportsDemo());
-    }
-
-    QString profilersTitle = tr("Profilers");
-    launchMenu->addSeparator()->setText(profilersTitle);
-    for (auto profiler : APPLICATION->profilers().values())
-    {
-        QAction *profilerAction = launchMenu->addAction(profiler->name());
-        QAction *profilerOfflineAction = launchMenu->addAction(tr("%1 Offline").arg(profiler->name()));
-        QString error;
-        if (!profiler->check(&error))
-        {
-            profilerAction->setDisabled(true);
-            profilerOfflineAction->setDisabled(true);
-            QString profilerToolTip = tr("Profiler not setup correctly. Go into settings, \"External Tools\".");
-            profilerAction->setToolTip(profilerToolTip);
-            profilerOfflineAction->setToolTip(profilerToolTip);
-        }
-        else if (m_selectedInstance)
-        {
-            profilerAction->setEnabled(m_selectedInstance->canLaunch());
-            profilerOfflineAction->setEnabled(m_selectedInstance->canLaunch());
-
-            connect(profilerAction, &QAction::triggered, [this, profiler]()
-                    {
-                        APPLICATION->launch(m_selectedInstance, true, false, profiler.get());
-                    });
-            connect(profilerOfflineAction, &QAction::triggered, [this, profiler]()
-                    {
-                        APPLICATION->launch(m_selectedInstance, false, false, profiler.get());
-                    });
-        }
-        else
-        {
-            profilerAction->setDisabled(true);
-            profilerOfflineAction->setDisabled(true);
-        }
-    }
-    ui->actionLaunchInstance->setMenu(launchMenu);
+    APPLICATION->populateInstanceLaunchMenu(m_selectedInstance, launchMenu);
 }
 
 void MainWindow::updateThemeMenu()
