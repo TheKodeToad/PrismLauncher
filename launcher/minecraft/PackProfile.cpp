@@ -530,22 +530,18 @@ QVariant PackProfile::data(const QModelIndex& index, int role) const
             }
         }
         case Qt::DecorationRole: {
-            switch (column) {
-                case NameColumn: {
-                    auto severity = patch->getProblemSeverity();
-                    switch (severity) {
-                        case ProblemSeverity::Warning:
-                            return "warning";
-                        case ProblemSeverity::Error:
-                            return "error";
-                        default:
-                            return QVariant();
-                    }
-                }
-                default: {
-                    return QVariant();
+            if (column == NameColumn) {
+                auto severity = patch->getProblemSeverity();
+                switch (severity) {
+                    case ProblemSeverity::Warning:
+                        return "warning";
+                    case ProblemSeverity::Error:
+                        return "error";
+                    default:
+                        return QVariant();
                 }
             }
+            return QVariant();
         }
     }
     return QVariant();
