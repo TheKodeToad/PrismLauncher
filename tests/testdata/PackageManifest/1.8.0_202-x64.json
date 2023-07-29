@@ -43,12 +43,14 @@
                 "lzma": {
                     "sha1": "4fee85109d7ff04b982d0576dabd15397f599125",
                     "size": 15455,
-                    "url": "https://launcher.mojang.com/v1/objects/4fee85109d7ff04b982d0576dabd15397f599125/THIRDPARTYLICENSEREADME-JAVAFX.txt"
+                    "url":
+                        "https://launcher.mojang.com/v1/objects/4fee85109d7ff04b982d0576dabd15397f599125/THIRDPARTYLICENSEREADME-JAVAFX.txt"
                 },
                 "raw": {
                     "sha1": "56ff42f87607b997b52ae0ef8bf315e36932e870",
                     "size": 112724,
-                    "url": "https://launcher.mojang.com/v1/objects/56ff42f87607b997b52ae0ef8bf315e36932e870/THIRDPARTYLICENSEREADME-JAVAFX.txt"
+                    "url":
+                        "https://launcher.mojang.com/v1/objects/56ff42f87607b997b52ae0ef8bf315e36932e870/THIRDPARTYLICENSEREADME-JAVAFX.txt"
                 }
             },
             "executable": false,
@@ -1998,7 +2000,8 @@
                 "raw": {
                     "sha1": "629c48907368ecf32d2395b6459c367f79d84689",
                     "size": 464,
-                    "url": "https://launcher.mojang.com/v1/objects/629c48907368ecf32d2395b6459c367f79d84689/gnome-mime-application-x-java-archive.png"
+                    "url":
+                        "https://launcher.mojang.com/v1/objects/629c48907368ecf32d2395b6459c367f79d84689/gnome-mime-application-x-java-archive.png"
                 }
             },
             "executable": false,
@@ -2009,7 +2012,8 @@
                 "raw": {
                     "sha1": "629c48907368ecf32d2395b6459c367f79d84689",
                     "size": 464,
-                    "url": "https://launcher.mojang.com/v1/objects/629c48907368ecf32d2395b6459c367f79d84689/gnome-mime-application-x-java-archive.png"
+                    "url":
+                        "https://launcher.mojang.com/v1/objects/629c48907368ecf32d2395b6459c367f79d84689/gnome-mime-application-x-java-archive.png"
                 }
             },
             "executable": false,
@@ -2020,7 +2024,8 @@
                 "raw": {
                     "sha1": "629c48907368ecf32d2395b6459c367f79d84689",
                     "size": 464,
-                    "url": "https://launcher.mojang.com/v1/objects/629c48907368ecf32d2395b6459c367f79d84689/gnome-mime-application-x-java-archive.png"
+                    "url":
+                        "https://launcher.mojang.com/v1/objects/629c48907368ecf32d2395b6459c367f79d84689/gnome-mime-application-x-java-archive.png"
                 }
             },
             "executable": false,
@@ -2073,7 +2078,8 @@
                 "raw": {
                     "sha1": "56a4996519f8f3541eba7b7a7a69bcdcd8ed0410",
                     "size": 2088,
-                    "url": "https://launcher.mojang.com/v1/objects/56a4996519f8f3541eba7b7a7a69bcdcd8ed0410/gnome-mime-application-x-java-archive.png"
+                    "url":
+                        "https://launcher.mojang.com/v1/objects/56a4996519f8f3541eba7b7a7a69bcdcd8ed0410/gnome-mime-application-x-java-archive.png"
                 }
             },
             "executable": false,
@@ -2084,7 +2090,8 @@
                 "raw": {
                     "sha1": "56a4996519f8f3541eba7b7a7a69bcdcd8ed0410",
                     "size": 2088,
-                    "url": "https://launcher.mojang.com/v1/objects/56a4996519f8f3541eba7b7a7a69bcdcd8ed0410/gnome-mime-application-x-java-archive.png"
+                    "url":
+                        "https://launcher.mojang.com/v1/objects/56a4996519f8f3541eba7b7a7a69bcdcd8ed0410/gnome-mime-application-x-java-archive.png"
                 }
             },
             "executable": false,
@@ -2095,7 +2102,8 @@
                 "raw": {
                     "sha1": "56a4996519f8f3541eba7b7a7a69bcdcd8ed0410",
                     "size": 2088,
-                    "url": "https://launcher.mojang.com/v1/objects/56a4996519f8f3541eba7b7a7a69bcdcd8ed0410/gnome-mime-application-x-java-archive.png"
+                    "url":
+                        "https://launcher.mojang.com/v1/objects/56a4996519f8f3541eba7b7a7a69bcdcd8ed0410/gnome-mime-application-x-java-archive.png"
                 }
             },
             "executable": false,
@@ -2151,7 +2159,8 @@
                 "raw": {
                     "sha1": "1477eceda25e162fcda2e69ee3906091973d8344",
                     "size": 473,
-                    "url": "https://launcher.mojang.com/v1/objects/1477eceda25e162fcda2e69ee3906091973d8344/gnome-mime-application-x-java-archive.png"
+                    "url":
+                        "https://launcher.mojang.com/v1/objects/1477eceda25e162fcda2e69ee3906091973d8344/gnome-mime-application-x-java-archive.png"
                 }
             },
             "executable": false,
@@ -2162,7 +2171,8 @@
                 "raw": {
                     "sha1": "1477eceda25e162fcda2e69ee3906091973d8344",
                     "size": 473,
-                    "url": "https://launcher.mojang.com/v1/objects/1477eceda25e162fcda2e69ee3906091973d8344/gnome-mime-application-x-java-archive.png"
+                    "url":
+                        "https://launcher.mojang.com/v1/objects/1477eceda25e162fcda2e69ee3906091973d8344/gnome-mime-application-x-java-archive.png"
                 }
             },
             "executable": false,
@@ -2173,7 +2183,8 @@
                 "raw": {
                     "sha1": "1477eceda25e162fcda2e69ee3906091973d8344",
                     "size": 473,
-                    "url": "https://launcher.mojang.com/v1/objects/1477eceda25e162fcda2e69ee3906091973d8344/gnome-mime-application-x-java-archive.png"
+                    "url":
+                        "https://launcher.mojang.com/v1/objects/1477eceda25e162fcda2e69ee3906091973d8344/gnome-mime-application-x-java-archive.png"
                 }
             },
             "executable": false,
@@ -2226,7 +2237,8 @@
                 "raw": {
                     "sha1": "d66e04dfa25c196bec2e201547325b79846ab674",
                     "size": 2085,
-                    "url": "https://launcher.mojang.com/v1/objects/d66e04dfa25c196bec2e201547325b79846ab674/gnome-mime-application-x-java-archive.png"
+                    "url":
+                        "https://launcher.mojang.com/v1/objects/d66e04dfa25c196bec2e201547325b79846ab674/gnome-mime-application-x-java-archive.png"
                 }
             },
             "executable": false,
@@ -2237,7 +2249,8 @@
                 "raw": {
                     "sha1": "d66e04dfa25c196bec2e201547325b79846ab674",
                     "size": 2085,
-                    "url": "https://launcher.mojang.com/v1/objects/d66e04dfa25c196bec2e201547325b79846ab674/gnome-mime-application-x-java-archive.png"
+                    "url":
+                        "https://launcher.mojang.com/v1/objects/d66e04dfa25c196bec2e201547325b79846ab674/gnome-mime-application-x-java-archive.png"
                 }
             },
             "executable": false,
@@ -2248,7 +2261,8 @@
                 "raw": {
                     "sha1": "d66e04dfa25c196bec2e201547325b79846ab674",
                     "size": 2085,
-                    "url": "https://launcher.mojang.com/v1/objects/d66e04dfa25c196bec2e201547325b79846ab674/gnome-mime-application-x-java-archive.png"
+                    "url":
+                        "https://launcher.mojang.com/v1/objects/d66e04dfa25c196bec2e201547325b79846ab674/gnome-mime-application-x-java-archive.png"
                 }
             },
             "executable": false,
@@ -2304,7 +2318,8 @@
                 "raw": {
                     "sha1": "0aa1605877280b88de1f1cc3e7e4bdbeed968a73",
                     "size": 525,
-                    "url": "https://launcher.mojang.com/v1/objects/0aa1605877280b88de1f1cc3e7e4bdbeed968a73/gnome-mime-application-x-java-archive.png"
+                    "url":
+                        "https://launcher.mojang.com/v1/objects/0aa1605877280b88de1f1cc3e7e4bdbeed968a73/gnome-mime-application-x-java-archive.png"
                 }
             },
             "executable": false,
@@ -2315,7 +2330,8 @@
                 "raw": {
                     "sha1": "0aa1605877280b88de1f1cc3e7e4bdbeed968a73",
                     "size": 525,
-                    "url": "https://launcher.mojang.com/v1/objects/0aa1605877280b88de1f1cc3e7e4bdbeed968a73/gnome-mime-application-x-java-archive.png"
+                    "url":
+                        "https://launcher.mojang.com/v1/objects/0aa1605877280b88de1f1cc3e7e4bdbeed968a73/gnome-mime-application-x-java-archive.png"
                 }
             },
             "executable": false,
@@ -2326,7 +2342,8 @@
                 "raw": {
                     "sha1": "0aa1605877280b88de1f1cc3e7e4bdbeed968a73",
                     "size": 525,
-                    "url": "https://launcher.mojang.com/v1/objects/0aa1605877280b88de1f1cc3e7e4bdbeed968a73/gnome-mime-application-x-java-archive.png"
+                    "url":
+                        "https://launcher.mojang.com/v1/objects/0aa1605877280b88de1f1cc3e7e4bdbeed968a73/gnome-mime-application-x-java-archive.png"
                 }
             },
             "executable": false,
@@ -2379,7 +2396,8 @@
                 "raw": {
                     "sha1": "e36636b1c04dc283c18adf669b892d54b15d3ee6",
                     "size": 1948,
-                    "url": "https://launcher.mojang.com/v1/objects/e36636b1c04dc283c18adf669b892d54b15d3ee6/gnome-mime-application-x-java-archive.png"
+                    "url":
+                        "https://launcher.mojang.com/v1/objects/e36636b1c04dc283c18adf669b892d54b15d3ee6/gnome-mime-application-x-java-archive.png"
                 }
             },
             "executable": false,
@@ -2390,7 +2408,8 @@
                 "raw": {
                     "sha1": "e36636b1c04dc283c18adf669b892d54b15d3ee6",
                     "size": 1948,
-                    "url": "https://launcher.mojang.com/v1/objects/e36636b1c04dc283c18adf669b892d54b15d3ee6/gnome-mime-application-x-java-archive.png"
+                    "url":
+                        "https://launcher.mojang.com/v1/objects/e36636b1c04dc283c18adf669b892d54b15d3ee6/gnome-mime-application-x-java-archive.png"
                 }
             },
             "executable": false,
@@ -2401,7 +2420,8 @@
                 "raw": {
                     "sha1": "e36636b1c04dc283c18adf669b892d54b15d3ee6",
                     "size": 1948,
-                    "url": "https://launcher.mojang.com/v1/objects/e36636b1c04dc283c18adf669b892d54b15d3ee6/gnome-mime-application-x-java-archive.png"
+                    "url":
+                        "https://launcher.mojang.com/v1/objects/e36636b1c04dc283c18adf669b892d54b15d3ee6/gnome-mime-application-x-java-archive.png"
                 }
             },
             "executable": false,
@@ -2457,7 +2477,8 @@
                 "raw": {
                     "sha1": "d2f6abe8e498aeecb334fb43f63001d34dbf6ea5",
                     "size": 783,
-                    "url": "https://launcher.mojang.com/v1/objects/d2f6abe8e498aeecb334fb43f63001d34dbf6ea5/gnome-mime-application-x-java-archive.png"
+                    "url":
+                        "https://launcher.mojang.com/v1/objects/d2f6abe8e498aeecb334fb43f63001d34dbf6ea5/gnome-mime-application-x-java-archive.png"
                 }
             },
             "executable": false,
@@ -2468,7 +2489,8 @@
                 "raw": {
                     "sha1": "d2f6abe8e498aeecb334fb43f63001d34dbf6ea5",
                     "size": 783,
-                    "url": "https://launcher.mojang.com/v1/objects/d2f6abe8e498aeecb334fb43f63001d34dbf6ea5/gnome-mime-application-x-java-archive.png"
+                    "url":
+                        "https://launcher.mojang.com/v1/objects/d2f6abe8e498aeecb334fb43f63001d34dbf6ea5/gnome-mime-application-x-java-archive.png"
                 }
             },
             "executable": false,
@@ -2479,7 +2501,8 @@
                 "raw": {
                     "sha1": "d2f6abe8e498aeecb334fb43f63001d34dbf6ea5",
                     "size": 783,
-                    "url": "https://launcher.mojang.com/v1/objects/d2f6abe8e498aeecb334fb43f63001d34dbf6ea5/gnome-mime-application-x-java-archive.png"
+                    "url":
+                        "https://launcher.mojang.com/v1/objects/d2f6abe8e498aeecb334fb43f63001d34dbf6ea5/gnome-mime-application-x-java-archive.png"
                 }
             },
             "executable": false,
@@ -2532,7 +2555,8 @@
                 "raw": {
                     "sha1": "4d5e6e0c41d1076bc86f3ab157c88a41a5716997",
                     "size": 3202,
-                    "url": "https://launcher.mojang.com/v1/objects/4d5e6e0c41d1076bc86f3ab157c88a41a5716997/gnome-mime-application-x-java-archive.png"
+                    "url":
+                        "https://launcher.mojang.com/v1/objects/4d5e6e0c41d1076bc86f3ab157c88a41a5716997/gnome-mime-application-x-java-archive.png"
                 }
             },
             "executable": false,
@@ -2543,7 +2567,8 @@
                 "raw": {
                     "sha1": "4d5e6e0c41d1076bc86f3ab157c88a41a5716997",
                     "size": 3202,
-                    "url": "https://launcher.mojang.com/v1/objects/4d5e6e0c41d1076bc86f3ab157c88a41a5716997/gnome-mime-application-x-java-archive.png"
+                    "url":
+                        "https://launcher.mojang.com/v1/objects/4d5e6e0c41d1076bc86f3ab157c88a41a5716997/gnome-mime-application-x-java-archive.png"
                 }
             },
             "executable": false,
@@ -2554,7 +2579,8 @@
                 "raw": {
                     "sha1": "4d5e6e0c41d1076bc86f3ab157c88a41a5716997",
                     "size": 3202,
-                    "url": "https://launcher.mojang.com/v1/objects/4d5e6e0c41d1076bc86f3ab157c88a41a5716997/gnome-mime-application-x-java-archive.png"
+                    "url":
+                        "https://launcher.mojang.com/v1/objects/4d5e6e0c41d1076bc86f3ab157c88a41a5716997/gnome-mime-application-x-java-archive.png"
                 }
             },
             "executable": false,
@@ -2769,12 +2795,14 @@
                 "lzma": {
                     "sha1": "3897ae198e96e5a687c9c9b218ff5df60c868e0d",
                     "size": 1089,
-                    "url": "https://launcher.mojang.com/v1/objects/3897ae198e96e5a687c9c9b218ff5df60c868e0d/fontconfig.RedHat.5.properties.src"
+                    "url":
+                        "https://launcher.mojang.com/v1/objects/3897ae198e96e5a687c9c9b218ff5df60c868e0d/fontconfig.RedHat.5.properties.src"
                 },
                 "raw": {
                     "sha1": "c67d1a06cb37b66e69560c9f5e4be7cf08af0493",
                     "size": 8841,
-                    "url": "https://launcher.mojang.com/v1/objects/c67d1a06cb37b66e69560c9f5e4be7cf08af0493/fontconfig.RedHat.5.properties.src"
+                    "url":
+                        "https://launcher.mojang.com/v1/objects/c67d1a06cb37b66e69560c9f5e4be7cf08af0493/fontconfig.RedHat.5.properties.src"
                 }
             },
             "executable": false,
@@ -2801,12 +2829,14 @@
                 "lzma": {
                     "sha1": "74f4148f9d7ec3d67bbd724834d478a72cfdb0db",
                     "size": 1111,
-                    "url": "https://launcher.mojang.com/v1/objects/74f4148f9d7ec3d67bbd724834d478a72cfdb0db/fontconfig.RedHat.6.properties.src"
+                    "url":
+                        "https://launcher.mojang.com/v1/objects/74f4148f9d7ec3d67bbd724834d478a72cfdb0db/fontconfig.RedHat.6.properties.src"
                 },
                 "raw": {
                     "sha1": "768e58d4d314621c38daf9fde6d67119f370acd9",
                     "size": 8735,
-                    "url": "https://launcher.mojang.com/v1/objects/768e58d4d314621c38daf9fde6d67119f370acd9/fontconfig.RedHat.6.properties.src"
+                    "url":
+                        "https://launcher.mojang.com/v1/objects/768e58d4d314621c38daf9fde6d67119f370acd9/fontconfig.RedHat.6.properties.src"
                 }
             },
             "executable": false,
@@ -2833,12 +2863,14 @@
                 "lzma": {
                     "sha1": "2c382bd741a9e23114be3da82dee8290ebfca8a9",
                     "size": 1555,
-                    "url": "https://launcher.mojang.com/v1/objects/2c382bd741a9e23114be3da82dee8290ebfca8a9/fontconfig.SuSE.10.properties.src"
+                    "url":
+                        "https://launcher.mojang.com/v1/objects/2c382bd741a9e23114be3da82dee8290ebfca8a9/fontconfig.SuSE.10.properties.src"
                 },
                 "raw": {
                     "sha1": "a38dbdbbc514567b8281e1aea726865f37e97894",
                     "size": 16772,
-                    "url": "https://launcher.mojang.com/v1/objects/a38dbdbbc514567b8281e1aea726865f37e97894/fontconfig.SuSE.10.properties.src"
+                    "url":
+                        "https://launcher.mojang.com/v1/objects/a38dbdbbc514567b8281e1aea726865f37e97894/fontconfig.SuSE.10.properties.src"
                 }
             },
             "executable": false,
@@ -2865,12 +2897,14 @@
                 "lzma": {
                     "sha1": "5c1635803906e2c59d36492dec724dd7ae49a5ab",
                     "size": 1589,
-                    "url": "https://launcher.mojang.com/v1/objects/5c1635803906e2c59d36492dec724dd7ae49a5ab/fontconfig.SuSE.11.properties.src"
+                    "url":
+                        "https://launcher.mojang.com/v1/objects/5c1635803906e2c59d36492dec724dd7ae49a5ab/fontconfig.SuSE.11.properties.src"
                 },
                 "raw": {
                     "sha1": "c4b69589e41a7279a71866a9134213be19cdf88d",
                     "size": 16781,
-                    "url": "https://launcher.mojang.com/v1/objects/c4b69589e41a7279a71866a9134213be19cdf88d/fontconfig.SuSE.11.properties.src"
+                    "url":
+                        "https://launcher.mojang.com/v1/objects/c4b69589e41a7279a71866a9134213be19cdf88d/fontconfig.SuSE.11.properties.src"
                 }
             },
             "executable": false,
@@ -3092,12 +3126,14 @@
                 "lzma": {
                     "sha1": "02e8d296e3b18a450f1ed1547cbf2b7275664c9a",
                     "size": 1969,
-                    "url": "https://launcher.mojang.com/v1/objects/02e8d296e3b18a450f1ed1547cbf2b7275664c9a/hijrah-config-umalqura.properties"
+                    "url":
+                        "https://launcher.mojang.com/v1/objects/02e8d296e3b18a450f1ed1547cbf2b7275664c9a/hijrah-config-umalqura.properties"
                 },
                 "raw": {
                     "sha1": "84aa425100740722e91f4725caf849e7863d12ba",
                     "size": 13962,
-                    "url": "https://launcher.mojang.com/v1/objects/84aa425100740722e91f4725caf849e7863d12ba/hijrah-config-umalqura.properties"
+                    "url":
+                        "https://launcher.mojang.com/v1/objects/84aa425100740722e91f4725caf849e7863d12ba/hijrah-config-umalqura.properties"
                 }
             },
             "executable": false,
@@ -3232,7 +3268,8 @@
                 "raw": {
                     "sha1": "2dda28b9bddc9b5b018e3e8a8b062a99d9b2f887",
                     "size": 3777,
-                    "url": "https://launcher.mojang.com/v1/objects/2dda28b9bddc9b5b018e3e8a8b062a99d9b2f887/sun-java_HighContrastInverse.png"
+                    "url":
+                        "https://launcher.mojang.com/v1/objects/2dda28b9bddc9b5b018e3e8a8b062a99d9b2f887/sun-java_HighContrastInverse.png"
                 }
             },
             "executable": false,
