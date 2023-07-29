@@ -147,7 +147,8 @@ public final class Launcher extends Applet implements AppletStub {
     public String getParameter(String key) {
         String param = params.get(key);
 
-        if (param != null) return param;
+        if (param != null)
+            return param;
 
         try {
             return super.getParameter(key);
@@ -169,7 +170,8 @@ public final class Launcher extends Applet implements AppletStub {
 
     @Override
     public void init() {
-        if (wrappedApplet != null) wrappedApplet.init();
+        if (wrappedApplet != null)
+            wrappedApplet.init();
     }
 
     @Override

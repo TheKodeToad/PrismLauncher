@@ -1,6 +1,5 @@
 public final class JavaCheck {
-    private static final String[] CHECKED_PROPERTIES =
-            new String[] {"os.arch", "java.version", "java.vendor"};
+    private static final String[] CHECKED_PROPERTIES = new String[] {"os.arch", "java.version", "java.vendor"};
 
     public static void main(String[] args) {
         int returnCode = 0;

@@ -80,8 +80,7 @@ public final class EntryPoint {
         Parameters params = new Parameters();
         PreLaunchAction action = PreLaunchAction.PROCEED;
 
-        try (BufferedReader reader = new BufferedReader(
-                     new InputStreamReader(System.in, StandardCharsets.UTF_8))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8))) {
             String line;
 
             while (action == PreLaunchAction.PROCEED) {
@@ -137,8 +136,7 @@ public final class EntryPoint {
         }
     }
 
-    private static PreLaunchAction parseLine(String input, Parameters params)
-            throws ParseException {
+    private static PreLaunchAction parseLine(String input, Parameters params) throws ParseException {
         switch (input) {
             case "":
                 break;
@@ -152,7 +150,8 @@ public final class EntryPoint {
             default:
                 String[] pair = input.split(" ", 2);
 
-                if (pair.length != 2) throw new ParseException(input, "[key] [value]");
+                if (pair.length != 2)
+                    throw new ParseException(input, "[key] [value]");
 
                 params.add(pair[0], pair[1]);
         }

@@ -106,16 +106,12 @@ public final class LegacyLauncher extends AbstractLauncher {
             System.setProperty("minecraft.applet.TargetDirectory", gameDir);
 
             try {
-                LegacyFrame window =
-                        new LegacyFrame(title, ReflectionUtils.createAppletClass(appletClass));
+                LegacyFrame window = new LegacyFrame(title, ReflectionUtils.createAppletClass(appletClass));
 
-                window.start(user, session, width, height, maximize, serverAddress, serverPort,
-                        gameArgs.contains("--demo"));
+                window.start(user, session, width, height, maximize, serverAddress, serverPort, gameArgs.contains("--demo"));
                 return;
             } catch (Throwable e) {
-                Log.error(
-                        "Running applet wrapper failed with exception; falling back to main class",
-                        e);
+                Log.error("Running applet wrapper failed with exception; falling back to main class", e);
             }
         }
 

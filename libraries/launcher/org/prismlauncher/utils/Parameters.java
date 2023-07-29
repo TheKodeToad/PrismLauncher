@@ -79,7 +79,8 @@ public final class Parameters {
     public List<String> getList(String key) throws ParameterNotFoundException {
         List<String> params = map.get(key);
 
-        if (params == null) throw new ParameterNotFoundException(key);
+        if (params == null)
+            throw new ParameterNotFoundException(key);
 
         return params;
     }
@@ -87,7 +88,8 @@ public final class Parameters {
     public List<String> getList(String key, List<String> def) {
         List<String> params = map.get(key);
 
-        if (params == null || params.isEmpty()) return def;
+        if (params == null || params.isEmpty())
+            return def;
 
         return params;
     }
@@ -95,7 +97,8 @@ public final class Parameters {
     public String getString(String key) throws ParameterNotFoundException {
         List<String> list = getList(key);
 
-        if (list.isEmpty()) throw new ParameterNotFoundException(key);
+        if (list.isEmpty())
+            throw new ParameterNotFoundException(key);
 
         return list.get(0);
     }
@@ -103,7 +106,8 @@ public final class Parameters {
     public String getString(String key, String def) {
         List<String> params = map.get(key);
 
-        if (params == null || params.isEmpty()) return def;
+        if (params == null || params.isEmpty())
+            return def;
 
         return params.get(0);
     }
