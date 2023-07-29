@@ -3,7 +3,6 @@
 #include "minecraft/MinecraftInstance.h"
 #include "ui/pages/BasePage.h"
 #include "ui/pages/BasePageProvider.h"
-#include "ui/pages/instance/GameOptionsPage.h"
 #include "ui/pages/instance/InstanceSettingsPage.h"
 #include "ui/pages/instance/LogPage.h"
 #include "ui/pages/instance/ManagedPackPage.h"
@@ -18,7 +17,7 @@
 #include "ui/pages/instance/VersionPage.h"
 #include "ui/pages/instance/WorldListPage.h"
 
-class InstancePageProvider : public QObject, public BasePageProvider {
+class InstancePageProvider : protected QObject, public BasePageProvider {
     Q_OBJECT
    public:
     explicit InstancePageProvider(InstancePtr parent) { inst = parent; }
