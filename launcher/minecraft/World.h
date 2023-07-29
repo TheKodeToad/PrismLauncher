@@ -25,7 +25,7 @@ struct GameType {
     QString toTranslatedString() const;
     QString toLogString() const;
 
-    enum { Unknown = -1, Survival = 0, Creative, Adventure, Spectator } type = Unknown;
+    enum { Unknown = -1, Survival, Creative, Adventure, Spectator } type = Unknown;
     std::optional<int> original;
 };
 
