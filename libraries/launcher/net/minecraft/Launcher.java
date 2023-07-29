@@ -71,7 +71,6 @@ import java.util.Map;
  * recommended.
  */
 public final class Launcher extends Applet implements AppletStub {
-
     private static final long serialVersionUID = 1L;
 
     private final Map<String, String> params = new HashMap<>();
@@ -148,8 +147,7 @@ public final class Launcher extends Applet implements AppletStub {
     public String getParameter(String key) {
         String param = params.get(key);
 
-        if (param != null)
-            return param;
+        if (param != null) return param;
 
         try {
             return super.getParameter(key);
@@ -171,8 +169,7 @@ public final class Launcher extends Applet implements AppletStub {
 
     @Override
     public void init() {
-        if (wrappedApplet != null)
-            wrappedApplet.init();
+        if (wrappedApplet != null) wrappedApplet.init();
     }
 
     @Override
@@ -207,12 +204,10 @@ public final class Launcher extends Applet implements AppletStub {
     }
 
     @Override
-    public void paint(Graphics graphics) {
-    }
+    public void paint(Graphics graphics) {}
 
     @Override
-    public void update(Graphics graphics) {
-    }
+    public void update(Graphics graphics) {}
 
     public void setParameter(String key, String value) {
         params.put(key, value);
@@ -221,5 +216,4 @@ public final class Launcher extends Applet implements AppletStub {
     public void setParameter(String key, boolean value) {
         setParameter(key, value ? "true" : "false");
     }
-
 }

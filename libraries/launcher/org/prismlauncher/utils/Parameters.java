@@ -54,15 +54,14 @@
 
 package org.prismlauncher.utils;
 
+import org.prismlauncher.exception.ParameterNotFoundException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.prismlauncher.exception.ParameterNotFoundException;
-
 public final class Parameters {
-
     private final Map<String, List<String>> map = new HashMap<>();
 
     public void add(String key, String value) {
@@ -80,8 +79,7 @@ public final class Parameters {
     public List<String> getList(String key) throws ParameterNotFoundException {
         List<String> params = map.get(key);
 
-        if (params == null)
-            throw new ParameterNotFoundException(key);
+        if (params == null) throw new ParameterNotFoundException(key);
 
         return params;
     }
@@ -89,8 +87,7 @@ public final class Parameters {
     public List<String> getList(String key, List<String> def) {
         List<String> params = map.get(key);
 
-        if (params == null || params.isEmpty())
-            return def;
+        if (params == null || params.isEmpty()) return def;
 
         return params;
     }
@@ -98,8 +95,7 @@ public final class Parameters {
     public String getString(String key) throws ParameterNotFoundException {
         List<String> list = getList(key);
 
-        if (list.isEmpty())
-            throw new ParameterNotFoundException(key);
+        if (list.isEmpty()) throw new ParameterNotFoundException(key);
 
         return list.get(0);
     }
@@ -107,10 +103,8 @@ public final class Parameters {
     public String getString(String key, String def) {
         List<String> params = map.get(key);
 
-        if (params == null || params.isEmpty())
-            return def;
+        if (params == null || params.isEmpty()) return def;
 
         return params.get(0);
     }
-
 }

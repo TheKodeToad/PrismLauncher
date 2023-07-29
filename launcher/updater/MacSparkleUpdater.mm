@@ -27,8 +27,9 @@
 
 @property(nonatomic, readonly) SPUUpdater* updater;
 
-/// A callback to run when the state of `canCheckForUpdates` for the `updater` changes.
-@property(nonatomic, copy) void (^callback) (bool);
+/// A callback to run when the state of `canCheckForUpdates` for the `updater`
+/// changes.
+@property(nonatomic, copy) void (^callback)(bool);
 
 - (id)initWithUpdater:(SPUUpdater*)updater;
 
@@ -36,22 +37,22 @@
 
 @implementation UpdaterObserver
 
-- (id)initWithUpdater:(SPUUpdater*)updater
-{
+- (id)initWithUpdater:(SPUUpdater*)updater {
     self = [super init];
     _updater = updater;
-    [self addObserver:self forKeyPath:@"updater.canCheckForUpdates" options:NSKeyValueObservingOptionNew context:nil];
+    [self addObserver:self
+           forKeyPath:@"updater.canCheckForUpdates"
+              options:NSKeyValueObservingOptionNew
+              context:nil];
 
     return self;
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath
+- (void)observeValueForKeyPath:(NSString*)keyPath
                       ofObject:(id)object
-                        change:(NSDictionary<NSKeyValueChangeKey, id> *)change
-                       context:(void *)context
-{
-    if ([keyPath isEqualToString:@"updater.canCheckForUpdates"])
-    {
+                        change:(NSDictionary<NSKeyValueChangeKey, id>*)change
+                       context:(void*)context {
+    if ([keyPath isEqualToString:@"updater.canCheckForUpdates"]) {
         bool canCheck = [change[NSKeyValueChangeNewKey] boolValue];
         self.callback(canCheck);
     }
@@ -59,34 +60,29 @@
 
 @end
 
-
 @interface UpdaterDelegate : NSObject <SPUUpdaterDelegate>
 
-@property(nonatomic, copy) NSSet<NSString *> *allowedChannels;
+@property(nonatomic, copy) NSSet<NSString*>* allowedChannels;
 
 @end
 
 @implementation UpdaterDelegate
 
-- (NSSet<NSString *> *)allowedChannelsForUpdater:(SPUUpdater *)updater
-{
+- (NSSet<NSString*>*)allowedChannelsForUpdater:(SPUUpdater*)updater {
     return _allowedChannels;
 }
 
 @end
 
-
-class MacSparkleUpdater::Private
-{
-public:
-    SPUStandardUpdaterController *updaterController;
-    UpdaterObserver *updaterObserver;
-    UpdaterDelegate *updaterDelegate;
-    NSAutoreleasePool *autoReleasePool;
+class MacSparkleUpdater::Private {
+   public:
+    SPUStandardUpdaterController* updaterController;
+    UpdaterObserver* updaterObserver;
+    UpdaterDelegate* updaterDelegate;
+    NSAutoreleasePool* autoReleasePool;
 };
 
-MacSparkleUpdater::MacSparkleUpdater()
-{
+MacSparkleUpdater::MacSparkleUpdater() {
     priv = new MacSparkleUpdater::Private();
 
     // Enable Cocoa's memory management.
@@ -97,20 +93,23 @@ MacSparkleUpdater::MacSparkleUpdater()
     priv->updaterDelegate = [[UpdaterDelegate alloc] init];
 
     // Controller is the interface for actually doing the updates.
-    priv->updaterController = [[SPUStandardUpdaterController alloc] initWithStartingUpdater:true
-                               updaterDelegate:priv->updaterDelegate
-                               userDriverDelegate:nil];
+    priv->updaterController = [[SPUStandardUpdaterController alloc]
+        initWithStartingUpdater:true
+                updaterDelegate:priv->updaterDelegate
+             userDriverDelegate:nil];
 
-    priv->updaterObserver = [[UpdaterObserver alloc] initWithUpdater:priv->updaterController.updater];
-    // Use KVO to run a callback that emits a Qt signal when `canCheckForUpdates` changes, so the UI can respond accordingly.
+    priv->updaterObserver = [[UpdaterObserver alloc]
+        initWithUpdater:priv->updaterController.updater];
+    // Use KVO to run a callback that emits a Qt signal when
+    // `canCheckForUpdates` changes, so the UI can respond accordingly.
     priv->updaterObserver.callback = ^(bool canCheck) {
-        emit canCheckForUpdatesChanged(canCheck);
+      emit canCheckForUpdatesChanged(canCheck);
     };
 }
 
-MacSparkleUpdater::~MacSparkleUpdater()
-{
-    [priv->updaterObserver removeObserver:priv->updaterObserver forKeyPath:@"updater.canCheckForUpdates"];
+MacSparkleUpdater::~MacSparkleUpdater() {
+    [priv->updaterObserver removeObserver:priv->updaterObserver
+                               forKeyPath:@"updater.canCheckForUpdates"];
 
     [priv->updaterController release];
     [priv->updaterObserver release];
@@ -119,77 +118,66 @@ MacSparkleUpdater::~MacSparkleUpdater()
     delete priv;
 }
 
-void MacSparkleUpdater::checkForUpdates()
-{
+void MacSparkleUpdater::checkForUpdates() {
     [priv->updaterController checkForUpdates:nil];
 }
 
-bool MacSparkleUpdater::getAutomaticallyChecksForUpdates()
-{
+bool MacSparkleUpdater::getAutomaticallyChecksForUpdates() {
     return priv->updaterController.updater.automaticallyChecksForUpdates;
 }
 
-double MacSparkleUpdater::getUpdateCheckInterval()
-{
+double MacSparkleUpdater::getUpdateCheckInterval() {
     return priv->updaterController.updater.updateCheckInterval;
 }
 
-QSet<QString> MacSparkleUpdater::getAllowedChannels()
-{
+QSet<QString> MacSparkleUpdater::getAllowedChannels() {
     // Convert NSSet<NSString> -> QSet<QString>
     __block QSet<QString> channels;
-    [priv->updaterDelegate.allowedChannels enumerateObjectsUsingBlock:^(NSString *channel, BOOL *stop)
-    {
-        channels.insert(QString::fromNSString(channel));
-    }];
+    [priv->updaterDelegate.allowedChannels
+        enumerateObjectsUsingBlock:^(NSString* channel, BOOL* stop) {
+          channels.insert(QString::fromNSString(channel));
+        }];
     return channels;
 }
 
-bool MacSparkleUpdater::getBetaAllowed()
-{
+bool MacSparkleUpdater::getBetaAllowed() {
     return getAllowedChannels().contains("beta");
 }
 
-void MacSparkleUpdater::setAutomaticallyChecksForUpdates(bool check)
-{
-    priv->updaterController.updater.automaticallyChecksForUpdates = check ? YES : NO; // make clang-tidy happy
+void MacSparkleUpdater::setAutomaticallyChecksForUpdates(bool check) {
+    priv->updaterController.updater.automaticallyChecksForUpdates =
+        check ? YES : NO;  // make clang-tidy happy
 }
 
-void MacSparkleUpdater::setUpdateCheckInterval(double seconds)
-{
+void MacSparkleUpdater::setUpdateCheckInterval(double seconds) {
     priv->updaterController.updater.updateCheckInterval = seconds;
 }
 
-void MacSparkleUpdater::clearAllowedChannels()
-{
+void MacSparkleUpdater::clearAllowedChannels() {
     priv->updaterDelegate.allowedChannels = [NSSet set];
 }
 
-void MacSparkleUpdater::setAllowedChannel(const QString &channel)
-{
-    if (channel.isEmpty())
-    {
+void MacSparkleUpdater::setAllowedChannel(const QString& channel) {
+    if (channel.isEmpty()) {
         clearAllowedChannels();
         return;
     }
 
-    NSSet<NSString *> *nsChannels = [NSSet setWithObject:channel.toNSString()];
+    NSSet<NSString*>* nsChannels = [NSSet setWithObject:channel.toNSString()];
     priv->updaterDelegate.allowedChannels = nsChannels;
 }
 
-void MacSparkleUpdater::setAllowedChannels(const QSet<QString> &channels)
-{
-    if (channels.isEmpty())
-    {
+void MacSparkleUpdater::setAllowedChannels(const QSet<QString>& channels) {
+    if (channels.isEmpty()) {
         clearAllowedChannels();
         return;
     }
 
     QString channelsConfig = "";
     // Convert QSet<QString> -> NSSet<NSString>
-    NSMutableSet<NSString *> *nsChannels = [NSMutableSet setWithCapacity:channels.count()];
-    foreach (const QString channel, channels)
-    {
+    NSMutableSet<NSString*>* nsChannels =
+        [NSMutableSet setWithCapacity:channels.count()];
+    foreach (const QString channel, channels) {
         [nsChannels addObject:channel.toNSString()];
         channelsConfig += channel + " ";
     }
@@ -197,14 +185,10 @@ void MacSparkleUpdater::setAllowedChannels(const QSet<QString> &channels)
     priv->updaterDelegate.allowedChannels = nsChannels;
 }
 
-void MacSparkleUpdater::setBetaAllowed(bool allowed)
-{
-    if (allowed)
-    {
+void MacSparkleUpdater::setBetaAllowed(bool allowed) {
+    if (allowed) {
         setAllowedChannel("beta");
-    }
-    else
-    {
+    } else {
         clearAllowedChannels();
     }
 }

@@ -54,6 +54,8 @@
 
 package org.prismlauncher.utils;
 
+import org.prismlauncher.utils.logging.Log;
+
 import java.applet.Applet;
 import java.io.File;
 import java.lang.invoke.MethodHandle;
@@ -62,10 +64,7 @@ import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-import org.prismlauncher.utils.logging.Log;
-
 public final class ReflectionUtils {
-
     private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
     private static final ClassLoader LOADER = ClassLoader.getSystemClassLoader();
 
@@ -79,7 +78,8 @@ public final class ReflectionUtils {
     public static Applet createAppletClass(String clazz) throws Throwable {
         Class<?> appletClass = LOADER.loadClass(clazz);
 
-        MethodHandle appletConstructor = LOOKUP.findConstructor(appletClass, MethodType.methodType(void.class));
+        MethodHandle appletConstructor =
+                LOOKUP.findConstructor(appletClass, MethodType.methodType(void.class));
         return (Applet) appletConstructor.invoke();
     }
 
@@ -116,7 +116,8 @@ public final class ReflectionUtils {
                 continue;
             }
 
-            Log.debug("Identified field " + field.getName() + " to match conditions for game directory field");
+            Log.debug("Identified field " + field.getName()
+                    + " to match conditions for game directory field");
 
             return field;
         }
@@ -133,7 +134,8 @@ public final class ReflectionUtils {
      * @throws NoSuchMethodException
      * @throws IllegalAccessException
      */
-    public static MethodHandle findMainMethod(Class<?> clazz) throws NoSuchMethodException, IllegalAccessException {
+    public static MethodHandle findMainMethod(Class<?> clazz)
+            throws NoSuchMethodException, IllegalAccessException {
         return LOOKUP.findStatic(clazz, "main", MethodType.methodType(void.class, String[].class));
     }
 
@@ -150,5 +152,4 @@ public final class ReflectionUtils {
             throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException {
         return findMainMethod(LOADER.loadClass(clazz));
     }
-
 }
