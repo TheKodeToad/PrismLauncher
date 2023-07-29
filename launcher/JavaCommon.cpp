@@ -63,7 +63,7 @@ bool JavaCommon::checkJVMArgs(QString jvmargs, QWidget* parent)
     return true;
 }
 
-void JavaCommon::javaWasOk(QWidget* parent, JavaCheckResult result)
+void JavaCommon::javaWasOk(QWidget* parent, const JavaCheckResult& result)
 {
     QString text;
     text += QObject::tr(
@@ -79,7 +79,7 @@ void JavaCommon::javaWasOk(QWidget* parent, JavaCheckResult result)
     CustomMessageBox::selectable(parent, QObject::tr("Java test success"), text, QMessageBox::Information)->show();
 }
 
-void JavaCommon::javaArgsWereBad(QWidget* parent, JavaCheckResult result)
+void JavaCommon::javaArgsWereBad(QWidget* parent, const JavaCheckResult& result)
 {
     auto htmlError = result.errorLog;
     QString text;
@@ -89,7 +89,7 @@ void JavaCommon::javaArgsWereBad(QWidget* parent, JavaCheckResult result)
     CustomMessageBox::selectable(parent, QObject::tr("Java test failure"), text, QMessageBox::Warning)->show();
 }
 
-void JavaCommon::javaBinaryWasBad(QWidget* parent, JavaCheckResult result)
+void JavaCommon::javaBinaryWasBad(QWidget* parent, const JavaCheckResult& result)
 {
     QString text;
     text += QObject::tr(

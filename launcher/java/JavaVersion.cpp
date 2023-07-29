@@ -38,7 +38,7 @@ JavaVersion::JavaVersion(const QString& rhs)
     operator=(rhs);
 }
 
-QString JavaVersion::toString()
+QString JavaVersion::toString() const
 {
     return m_string;
 }

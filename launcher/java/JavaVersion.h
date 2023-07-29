@@ -25,7 +25,7 @@ class JavaVersion {
 
     bool requiresPermGen();
 
-    QString toString();
+    QString toString() const;
 
     int major() { return m_major; }
     int minor() { return m_minor; }
