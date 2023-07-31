@@ -29,6 +29,9 @@ class AuthFlow : public AccountTask {
    signals:
     void activityChanged(Katabasis::Activity activity);
 
+   public slots:
+    bool abort() override;
+
    private slots:
     void stepFinished(AccountTaskState resultingState, QString message);
 
@@ -39,4 +42,5 @@ class AuthFlow : public AccountTask {
    protected:
     QList<AuthStep::Ptr> m_steps;
     AuthStep::Ptr m_currentStep;
+    bool m_aborted = false;
 };

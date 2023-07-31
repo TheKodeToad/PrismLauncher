@@ -152,7 +152,7 @@ void AccountListPage::on_actionAddMojang_triggered()
 void AccountListPage::on_actionAddMicrosoft_triggered()
 {
     MinecraftAccountPtr account =
-        MSALoginDialog::newAccount(this, tr("Please enter your Mojang account email and password to add your account."));
+        MSALoginDialog::newAccount(this);
 
     if (account) {
         m_accounts->addAccount(account);

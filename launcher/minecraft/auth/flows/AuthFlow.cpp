@@ -25,8 +25,19 @@ void AuthFlow::executeTask()
     nextStep();
 }
 
+bool AuthFlow::abort()
+{
+    m_aborted = true;
+    return true;
+}
+
 void AuthFlow::nextStep()
 {
+    if (m_aborted) {
+        emitAborted();
+        return;
+    }
+
     if (m_steps.size() == 0) {
         // we got to the end without an incident... assume this is all.
         m_currentStep.reset();
