@@ -37,12 +37,12 @@
 #include "InstanceWindow.h"
 #include "Application.h"
 
-#include <QScrollBar>
-#include <QMessageBox>
-#include <QHBoxLayout>
-#include <QPushButton>
 #include <qlayoutitem.h>
 #include <QCloseEvent>
+#include <QHBoxLayout>
+#include <QMessageBox>
+#include <QPushButton>
+#include <QScrollBar>
 
 #include "ui/widgets/PageContainer.h"
 
@@ -50,8 +50,7 @@
 
 #include "icons/IconList.h"
 
-InstanceWindow::InstanceWindow(InstancePtr instance, QWidget *parent)
-    : QMainWindow(parent), m_instance(instance)
+InstanceWindow::InstanceWindow(InstancePtr instance, QWidget* parent) : QMainWindow(parent), m_instance(instance)
 {
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -146,8 +145,7 @@ InstanceWindow::InstanceWindow(InstancePtr instance, QWidget *parent)
 
 void InstanceWindow::on_instanceStatusChanged(BaseInstance::Status, BaseInstance::Status newStatus)
 {
-    if(newStatus == BaseInstance::Status::Gone)
-    {
+    if (newStatus == BaseInstance::Status::Gone) {
         m_doNotSave = true;
         close();
     }
@@ -158,7 +156,7 @@ void InstanceWindow::updateButtons()
     m_launchButton->setEnabled(m_instance->canLaunch());
     m_killButton->setEnabled(m_instance->isRunning());
 
-    QMenu *launchMenu = m_launchButton->menu();
+    QMenu* launchMenu = m_launchButton->menu();
     if (launchMenu)
         launchMenu->clear();
     else
@@ -176,7 +174,7 @@ void InstanceWindow::runningStateChanged(bool running)
 {
     updateButtons();
     m_container->refreshContainer();
-    if(running) {
+    if (running) {
         selectPage("log");
     }
 }
@@ -184,13 +182,11 @@ void InstanceWindow::runningStateChanged(bool running)
 void InstanceWindow::closeEvent(QCloseEvent *event)
 {
     bool proceed = true;
-    if(!m_doNotSave)
-    {
+    if (!m_doNotSave) {
         proceed &= m_container->prepareToClose();
     }
 
-    if(!proceed)
-    {
+    if (!proceed) {
         return;
     }
 
@@ -215,15 +211,14 @@ bool InstanceWindow::selectPage(QString pageId)
     return m_container->selectPage(pageId);
 }
 
-void InstanceWindow::refreshContainer()
+BasePage* InstanceWindow::selectedPage() const
 {
-    m_container->refreshContainer();
+    return m_container->selectedPage();
 }
 
 bool InstanceWindow::requestClose()
 {
-    if(m_container->prepareToClose())
-    {
+    if (m_container->prepareToClose()) {
         close();
         return true;
     }
