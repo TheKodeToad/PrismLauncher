@@ -163,7 +163,9 @@ void APIPage::applySettings()
     }
     // Don't allow HTTP, since meta is basically RCE with all the jar files.
     if (!metaURL.isEmpty() && metaURL.scheme() == "http") {
-        metaURL.setScheme("https");
+        QStringList allowedHosts({ "localhost", "127.0.0.1", "0.0.0.0", "[::1]" });
+        if (!allowedHosts.contains(metaURL.host()))
+            metaURL.setScheme("https");
     }
 
     s->set("MetaURLOverride", metaURL.toString());
