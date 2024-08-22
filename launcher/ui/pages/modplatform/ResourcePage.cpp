@@ -41,6 +41,7 @@
 #include "modplatform/ModIndex.h"
 #include "ui_ResourcePage.h"
 
+#include <Application.h>
 #include <QDesktopServices>
 #include <QKeyEvent>
 
@@ -272,18 +273,22 @@ void ResourcePage::updateVersionList()
     m_ui->versionSelectionBox->blockSignals(false);
 
     if (current_pack) {
-        auto installedVersion = m_model->getInstalledPackVersion(current_pack);
+        bool select_release = APPLICATION->settings()->get("PreferModReleaseChannel").toBool();
 
         for (int i = 0; i < current_pack->versions.size(); i++) {
             auto& version = current_pack->versions[i];
             if (!m_model->checkVersionFilters(version))
                 continue;
 
-            auto release_type = current_pack->versions[i].version_type.isValid()
-                                    ? QString(" [%1]").arg(current_pack->versions[i].version_type.toString())
-                                    : "";
+            auto release_type = current_pack->versions[i].version_type;
 
-            m_ui->versionSelectionBox->addItem(QString("%1%2").arg(version.version, release_type), QVariant(i));
+            m_ui->versionSelectionBox->addItem(
+                version.version + (release_type.isValid() ? QString(" [%1]").arg(release_type.toString()) : ""), QVariant(i));
+
+            if (select_release && release_type == ModPlatform::IndexedVersionType::VersionType::Release) {
+                m_ui->versionSelectionBox->setCurrentIndex(m_ui->versionSelectionBox->count() - 1);
+                select_release = false;
+            }
         }
     }
     if (m_ui->versionSelectionBox->count() == 0) {

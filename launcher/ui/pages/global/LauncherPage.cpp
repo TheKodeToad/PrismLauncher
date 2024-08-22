@@ -4,6 +4,7 @@
  *  Copyright (c) 2022 Jamie Mansfield <jmansfield@cadixdev.org>
  *  Copyright (c) 2022 dada513 <dada513@protonmail.com>
  *  Copyright (C) 2022 Tayou <git@tayou.org>
+ *  Copyright (C) 2024 TheKodeToad <TheKodeToad@tayou.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -243,6 +244,7 @@ void LauncherPage::applySettings()
     s->set("ModMetadataDisabled", ui->metadataDisableBtn->isChecked());
     s->set("ModDependenciesDisabled", ui->dependenciesDisableBtn->isChecked());
     s->set("SkipModpackUpdatePrompt", ui->skipModpackUpdatePromptBtn->isChecked());
+    s->set("PreferModReleaseChannel", ui->preferReleaseChannelBtn->isChecked());
 }
 void LauncherPage::loadSettings()
 {
@@ -307,6 +309,7 @@ void LauncherPage::loadSettings()
     ui->metadataWarningLabel->setHidden(!ui->metadataDisableBtn->isChecked());
     ui->dependenciesDisableBtn->setChecked(s->get("ModDependenciesDisabled").toBool());
     ui->skipModpackUpdatePromptBtn->setChecked(s->get("SkipModpackUpdatePrompt").toBool());
+    ui->preferReleaseChannelBtn->setChecked(s->get("PreferModReleaseChannel").toBool());
 }
 
 void LauncherPage::refreshFontPreview()

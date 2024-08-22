@@ -253,6 +253,16 @@
             </property>
            </widget>
           </item>
+          <item>
+           <widget class="QCheckBox" name="preferReleaseChannelBtn">
+            <property name="toolTip">
+             <string>With this turned on, release versions of mods will be installed by default, if available. With this turned off, the latest version will always be picked - even if it is an alpha or beta.</string>
+            </property>
+            <property name="text">
+             <string>Prefer release channel</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
