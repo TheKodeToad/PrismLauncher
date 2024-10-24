@@ -42,7 +42,7 @@
           <bool>true</bool>
          </property>
          <property name="plainText">
-          <string notr="true"/>
+          <string notr="true">The game log will appear here when you launch Minecraft.</string>
          </property>
          <property name="textInteractionFlags">
           <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse|Qt::TextBrowserInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
