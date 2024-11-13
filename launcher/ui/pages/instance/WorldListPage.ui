@@ -36,7 +36,7 @@
        <bool>true</bool>
       </property>
       <property name="dragDropMode">
-       <enum>QAbstractItemView::DragDrop</enum>
+       <enum>QAbstractItemView::DragDropMode::DragDrop</enum>
       </property>
       <property name="alternatingRowColors">
        <bool>true</bool>
@@ -65,13 +65,16 @@
     <string>Actions</string>
    </property>
    <property name="allowedAreas">
-    <set>Qt::LeftToolBarArea|Qt::RightToolBarArea</set>
+    <set>Qt::ToolBarArea::LeftToolBarArea|Qt::ToolBarArea::RightToolBarArea</set>
    </property>
    <property name="toolButtonStyle">
-    <enum>Qt::ToolButtonTextOnly</enum>
+    <enum>Qt::ToolButtonStyle::ToolButtonTextOnly</enum>
    </property>
    <property name="floatable">
     <bool>false</bool>
+   </property>
+   <property name="useDefaultAction" stdset="0">
+    <bool>true</bool>
    </property>
    <attribute name="toolBarArea">
     <enum>RightToolBarArea</enum>
@@ -85,7 +88,7 @@
    <addaction name="actionRename"/>
    <addaction name="actionCopy"/>
    <addaction name="actionRemove"/>
-   <addaction name="actionMCEdit"/>
+   <addaction name="actionOpen_In"/>
    <addaction name="actionDatapacks"/>
    <addaction name="actionReset_Icon"/>
    <addaction name="separator"/>
@@ -152,6 +155,25 @@
    </property>
    <property name="toolTip">
     <string>Manage datapacks inside the world.</string>
+   </property>
+  </action>
+  <action name="actionOpen_In">
+   <property name="text">
+    <string>Open In...</string>
+   </property>
+   <property name="toolTip">
+    <string>Open the selected world with a configured tool.</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionNBT_Studio">
+   <property name="text">
+    <string>NBT Studio</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::NoRole</enum>
    </property>
   </action>
  </widget>

@@ -40,6 +40,8 @@ class WideBar : public QToolBar {
 
     void removeAction(QAction* action);
 
+    QWidget* widgetForAction(QAction* action);
+
    private:
     struct BarEntry {
         enum class Type { None, Action, Separator, Spacer } type = Type::None;

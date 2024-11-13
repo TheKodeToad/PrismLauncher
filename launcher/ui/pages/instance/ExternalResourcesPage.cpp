@@ -47,6 +47,8 @@
 #include <QMenu>
 #include <algorithm>
 
+#include "ui/widgets/LabeledToolButton.h"
+
 ExternalResourcesPage::ExternalResourcesPage(BaseInstance* instance, std::shared_ptr<ResourceFolderModel> model, QWidget* parent)
     : QMainWindow(parent), m_instance(instance), ui(new Ui::ExternalResourcesPage), m_model(model)
 {

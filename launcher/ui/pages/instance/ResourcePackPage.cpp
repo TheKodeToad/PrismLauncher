@@ -43,6 +43,7 @@
 #include "ui/dialogs/ProgressDialog.h"
 #include "ui/dialogs/ResourceDownloadDialog.h"
 #include "ui/dialogs/ResourceUpdateDialog.h"
+#include "ui/widgets/LabeledToolButton.h"
 
 ResourcePackPage::ResourcePackPage(MinecraftInstance* instance, std::shared_ptr<ResourcePackFolderModel> model, QWidget* parent)
     : ExternalResourcesPage(instance, model, parent), m_model(model)
@@ -57,6 +58,7 @@ ResourcePackPage::ResourcePackPage(MinecraftInstance* instance, std::shared_ptr<
     ui->actionUpdateItem->setToolTip(tr("Try to check or update all selected resource packs (all resource packs if none are selected)"));
     connect(ui->actionUpdateItem, &QAction::triggered, this, &ResourcePackPage::updateResourcePacks);
     ui->actionsToolbar->insertActionBefore(ui->actionAddItem, ui->actionUpdateItem);
+    dynamic_cast<QToolButton*>(ui->actionsToolbar->widgetForAction((ui->actionUpdateItem)))->setPopupMode(QToolButton::MenuButtonPopup);
 
     auto updateMenu = new QMenu(this);
 
@@ -234,7 +236,7 @@ void ResourcePackPage::changeResourcePackVersion()
     if (rows.count() != 1)
         return;
 
-    Resource &resource = m_model->at(m_filterModel->mapToSource(rows[0]).row());
+    Resource& resource = m_model->at(m_filterModel->mapToSource(rows[0]).row());
 
     if (resource.metadata() == nullptr)
         return;

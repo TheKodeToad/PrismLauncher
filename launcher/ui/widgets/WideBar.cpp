@@ -28,10 +28,6 @@ class ActionButton : public QToolButton {
     void actionChanged()
     {
         setEnabled(m_action->isEnabled());
-        // better pop up mode
-        if (m_action->menu()) {
-            setPopupMode(QToolButton::MenuButtonPopup);
-        }
         if (!m_use_default_action) {
             setChecked(m_action->isChecked());
             setCheckable(m_action->isCheckable());
@@ -233,7 +229,7 @@ void WideBar::showVisibilityMenu(QPoint const& position)
                 entry.bar_action->setVisible(toggled);
 
                 // NOTE: This is needed so that disabled actions get reflected on the button when it is made visible.
-                static_cast<ActionButton*>(widgetForAction(entry.bar_action))->actionChanged();
+                static_cast<ActionButton*>(QToolBar::widgetForAction(entry.bar_action))->actionChanged();
             });
 
             m_bar_menu->addAction(act);
@@ -288,7 +284,7 @@ void WideBar::setVisibilityState(QByteArray&& state)
         entry.bar_action->setVisible(bits.at(i++) == '1');
 
         // NOTE: This is needed so that disabled actions get reflected on the button when it is made visible.
-        static_cast<ActionButton*>(widgetForAction(entry.bar_action))->actionChanged();
+        static_cast<ActionButton*>(QToolBar::widgetForAction(entry.bar_action))->actionChanged();
     }
 }
 
@@ -318,6 +314,16 @@ void WideBar::removeAction(QAction* action)
     iter->bar_action->setVisible(false);
     removeAction(iter->bar_action);
     m_entries.erase(iter);
+}
+
+QWidget* WideBar::widgetForAction(QAction* action)
+{
+    auto matching = getMatching(action);
+
+    if (matching == m_entries.end())
+        return nullptr;
+
+    return QToolBar::widgetForAction(matching->bar_action);
 }
 
 #include "WideBar.moc"

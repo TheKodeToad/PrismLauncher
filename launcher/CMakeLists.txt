@@ -467,6 +467,8 @@ set(TOOLS_SOURCES
     tools/JVisualVM.h
     tools/MCEditTool.cpp
     tools/MCEditTool.h
+    tools/NBTStudioTool.cpp
+    tgools/NBTStudioTool.h
     tools/GenericProfiler.cpp
     tools/GenericProfiler.h
 )

@@ -45,6 +45,7 @@
 #include "ui/dialogs/ProgressDialog.h"
 #include "ui/dialogs/ResourceDownloadDialog.h"
 #include "ui/dialogs/ResourceUpdateDialog.h"
+#include "ui/widgets/LabeledToolButton.h"
 
 TexturePackPage::TexturePackPage(MinecraftInstance* instance, std::shared_ptr<TexturePackFolderModel> model, QWidget* parent)
     : ExternalResourcesPage(instance, model, parent), m_model(model)
@@ -59,6 +60,7 @@ TexturePackPage::TexturePackPage(MinecraftInstance* instance, std::shared_ptr<Te
     ui->actionUpdateItem->setToolTip(tr("Try to check or update all selected texture packs (all texture packs if none are selected)"));
     connect(ui->actionUpdateItem, &QAction::triggered, this, &TexturePackPage::updateTexturePacks);
     ui->actionsToolbar->insertActionBefore(ui->actionAddItem, ui->actionUpdateItem);
+    dynamic_cast<QToolButton*>(ui->actionsToolbar->widgetForAction((ui->actionUpdateItem)))->setPopupMode(QToolButton::MenuButtonPopup);
 
     auto updateMenu = new QMenu(this);
 

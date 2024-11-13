@@ -57,6 +57,8 @@
 #include "ui/GuiUtil.h"
 
 #include "Application.h"
+#include "tools/NBTStudioTool.h"
+#include "ui/widgets/LabeledToolButton.h"
 
 class WorldListProxyModel : public QSortFilterProxyModel {
     Q_OBJECT
@@ -107,6 +109,13 @@ WorldListPage::WorldListPage(InstancePtr inst, std::shared_ptr<WorldList> worlds
 
     connect(ui->worldTreeView->selectionModel(), &QItemSelectionModel::currentChanged, this, &WorldListPage::worldChanged);
     worldChanged(QModelIndex(), QModelIndex());
+
+    auto* openInMenu = new QMenu(this);
+    openInMenu->addAction(ui->actionMCEdit);
+    openInMenu->addAction(ui->actionNBT_Studio);
+    ui->actionOpen_In->setMenu(openInMenu);
+
+    dynamic_cast<QToolButton*>(ui->toolBar->widgetForAction(ui->actionOpen_In))->setPopupMode(QToolButton::InstantPopup);
 }
 
 void WorldListPage::openedImpl()
@@ -332,12 +341,38 @@ void WorldListPage::mceditState(LoggedProcess::State state)
     }
 }
 
+void WorldListPage::on_actionNBT_Studio_triggered()
+{
+    const NBTStudioTool* nbtStudio = APPLICATION->nbtStudio();
+    const QString executable = nbtStudio->getProgramPath();
+
+    QModelIndex index = getSelectedWorld();
+
+    if (!index.isValid())
+        return;
+
+    if (!worldSafetyNagQuestion(tr("Open World in NBT Studio")))
+        return;
+
+    const QString worldPath = m_worlds->data(index, WorldList::FolderRole).toString();
+    const QString program = nbtStudio->getProgramPath();
+
+    if (program.isEmpty()) {
+        QMessageBox::warning(this->parentWidget(), tr("No NBT Studio found or set up!"),
+                             tr("You do not have NBT Studio set up or it was moved.\nYou can set it up in the global settings."));
+        return;
+    }
+
+    if (!QProcess::startDetached(executable, { worldPath }, QFileInfo(program).path()))
+        QMessageBox::warning(this->parentWidget(), tr("NBT Studio failed to start!"), tr("Could not start the program."));
+}
+
 void WorldListPage::worldChanged([[maybe_unused]] const QModelIndex& current, [[maybe_unused]] const QModelIndex& previous)
 {
     QModelIndex index = getSelectedWorld();
     bool enable = index.isValid();
     ui->actionCopy_Seed->setEnabled(enable);
-    ui->actionMCEdit->setEnabled(enable);
+    ui->actionOpen_In->setEnabled(enable);
     ui->actionRemove->setEnabled(enable);
     ui->actionCopy->setEnabled(enable);
     ui->actionRename->setEnabled(enable);

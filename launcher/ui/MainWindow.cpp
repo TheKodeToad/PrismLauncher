@@ -203,11 +203,17 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
         auto accountMenuButton = dynamic_cast<QToolButton*>(ui->mainToolBar->widgetForAction(ui->actionAccountsButton));
         accountMenuButton->setPopupMode(QToolButton::InstantPopup);
 
+        dynamic_cast<QToolButton*>(ui->instanceToolBar->widgetForAction((ui->actionLaunchInstance)))
+            ->setPopupMode(QToolButton::MenuButtonPopup);
+
         auto exportInstanceMenu = new QMenu(this);
         exportInstanceMenu->addAction(ui->actionExportInstanceZip);
         exportInstanceMenu->addAction(ui->actionExportInstanceMrPack);
         exportInstanceMenu->addAction(ui->actionExportInstanceFlamePack);
         ui->actionExportInstance->setMenu(exportInstanceMenu);
+
+        dynamic_cast<QToolButton*>(ui->instanceToolBar->widgetForAction((ui->actionExportInstance)))
+            ->setPopupMode(QToolButton::MenuButtonPopup);
     }
 
     // hide, disable and show stuff

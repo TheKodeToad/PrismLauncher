@@ -91,6 +91,7 @@ class WorldListPage : public QMainWindow, public BasePage {
    private slots:
     void on_actionCopy_Seed_triggered();
     void on_actionMCEdit_triggered();
+    void on_actionNBT_Studio_triggered();
     void on_actionRemove_triggered();
     void on_actionAdd_triggered();
     void on_actionCopy_triggered();

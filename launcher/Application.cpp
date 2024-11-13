@@ -130,6 +130,7 @@
 #include <stdlib.h>
 #include <sys.h>
 #include "SysInfo.h"
+#include "tools/NBTStudioTool.h"
 
 #ifdef Q_OS_LINUX
 #include <dlfcn.h>
@@ -912,10 +913,8 @@ Application::Application(int& argc, char** argv) : QApplication(argc, argv)
         profiler->registerSettings(m_settings);
     }
 
-    // Create the MCEdit thing... why is this here?
-    {
-        m_mcedit.reset(new MCEditTool(m_settings));
-    }
+    m_mcedit = std::make_unique<MCEditTool>(m_settings);
+    m_nbtStudio = std::make_unique<NBTStudioTool>(m_settings);
 
 #ifdef Q_OS_MACOS
     connect(this, &Application::clickedOnDock, [this]() { this->showMainWindow(); });

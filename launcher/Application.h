@@ -50,6 +50,7 @@
 
 #include "minecraft/launch/MinecraftTarget.h"
 
+class NBTStudioTool;
 class LaunchController;
 class LocalPeer;
 class InstanceWindow;
@@ -131,6 +132,8 @@ class Application : public QApplication {
     std::shared_ptr<IconList> icons() const { return m_icons; }
 
     MCEditTool* mcedit() const { return m_mcedit.get(); }
+
+    NBTStudioTool* nbtStudio() const { return m_nbtStudio.get(); }
 
     shared_qobject_ptr<AccountList> accounts() const { return m_accounts; }
 
@@ -254,6 +257,7 @@ class Application : public QApplication {
     std::shared_ptr<TranslationsModel> m_translations;
     std::shared_ptr<GenericPageProvider> m_globalSettingsProvider;
     std::unique_ptr<MCEditTool> m_mcedit;
+    std::unique_ptr<NBTStudioTool> m_nbtStudio;
     QSet<QString> m_features;
     std::unique_ptr<ThemeManager> m_themeManager;
 

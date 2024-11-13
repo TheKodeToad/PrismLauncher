@@ -46,6 +46,7 @@
 #include "Application.h"
 #include "settings/SettingsObject.h"
 #include "tools/BaseProfiler.h"
+#include "tools/NBTStudioTool.h"
 
 ExternalToolsPage::ExternalToolsPage(QWidget* parent) : QWidget(parent), ui(new Ui::ExternalToolsPage)
 {
@@ -57,6 +58,7 @@ ExternalToolsPage::ExternalToolsPage(QWidget* parent) : QWidget(parent), ui(new 
     ui->mceditLink->setOpenExternalLinks(true);
     ui->jvisualvmLink->setOpenExternalLinks(true);
     ui->jprofilerLink->setOpenExternalLinks(true);
+    ui->nbtStudioLink->setOpenExternalLinks(true);
     loadSettings();
 }
 
@@ -71,6 +73,7 @@ void ExternalToolsPage::loadSettings()
     ui->jprofilerPathEdit->setText(s->get("JProfilerPath").toString());
     ui->jvisualvmPathEdit->setText(s->get("JVisualVMPath").toString());
     ui->mceditPathEdit->setText(s->get("MCEditPath").toString());
+    ui->nbtStudioPathEdit->setText(s->get("NBTStudioPath").toString());
 
     // Editors
     ui->jsonEditorTextBox->setText(s->get("JsonEditor").toString());
@@ -82,6 +85,7 @@ void ExternalToolsPage::applySettings()
     s->set("JProfilerPath", ui->jprofilerPathEdit->text());
     s->set("JVisualVMPath", ui->jvisualvmPathEdit->text());
     s->set("MCEditPath", ui->mceditPathEdit->text());
+    s->set("NBTStudioPath", ui->nbtStudioPathEdit->text());
 
     // Editors
     QString jsonEditor = ui->jsonEditorTextBox->text();
@@ -183,6 +187,38 @@ void ExternalToolsPage::on_mceditCheckBtn_clicked()
     } else {
         QMessageBox::information(this, tr("OK"), tr("MCEdit setup seems to be OK"));
     }
+}
+
+void ExternalToolsPage::on_nbtStudioPathBtn_clicked()
+{
+    QString rawPath = ui->nbtStudioPathEdit->text();
+
+    while (true) {
+        rawPath = QFileDialog::getOpenFileName(this, tr("NBT Studio Application"), rawPath);
+
+        if (rawPath.isEmpty())
+            break;
+
+        const QString normalizedPath = FS::NormalizePath(rawPath);
+
+        QString error;
+
+        if (APPLICATION->nbtStudio()->check(normalizedPath, error)) {
+            ui->nbtStudioPathEdit->setText(normalizedPath);
+            break;
+        }
+
+        QMessageBox::critical(this, tr("Error"), tr("Error while checking NBT Studio install:\n%1").arg(error));
+    }
+}
+
+void ExternalToolsPage::on_nbtStudioCheckBtn_clicked()
+{
+    QString error;
+    if (!APPLICATION->nbtStudio()->check(ui->nbtStudioPathEdit->text(), error))
+        QMessageBox::critical(this, tr("Error"), tr("Error while checking NBT Studio install:\n%1").arg(error));
+    else
+        QMessageBox::information(this, tr("OK"), "NBT Studio setup seems to be OK");
 }
 
 void ExternalToolsPage::on_jsonEditorBrowseBtn_clicked()

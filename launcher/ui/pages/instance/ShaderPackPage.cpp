@@ -46,35 +46,7 @@
 #include "ui/dialogs/ProgressDialog.h"
 #include "ui/dialogs/ResourceDownloadDialog.h"
 #include "ui/dialogs/ResourceUpdateDialog.h"
-
-ShaderPackPage::ShaderPackPage(MinecraftInstance* instance, std::shared_ptr<ShaderPackFolderModel> model, QWidget* parent)
-    : ExternalResourcesPage(instance, model, parent), m_model(model)
-{
-    ui->actionDownloadItem->setText(tr("Download Packs"));
-    ui->actionDownloadItem->setToolTip(tr("Download shader packs from online mod platforms"));
-    ui->actionDownloadItem->setEnabled(true);
-    ui->actionsToolbar->insertActionBefore(ui->actionAddItem, ui->actionDownloadItem);
-
-    connect(ui->actionDownloadItem, &QAction::triggered, this, &ShaderPackPage::downloadShaderPack);
-
-    ui->actionUpdateItem->setToolTip(tr("Try to check or update all selected shader packs (all shader packs if none are selected)"));
-    connect(ui->actionUpdateItem, &QAction::triggered, this, &ShaderPackPage::updateShaderPacks);
-    ui->actionsToolbar->insertActionBefore(ui->actionAddItem, ui->actionUpdateItem);
-
-    auto updateMenu = new QMenu(this);
-
-    auto update = updateMenu->addAction(ui->actionUpdateItem->text());
-    connect(update, &QAction::triggered, this, &ShaderPackPage::updateShaderPacks);
-
-    updateMenu->addAction(ui->actionResetItemMetadata);
-    connect(ui->actionResetItemMetadata, &QAction::triggered, this, &ShaderPackPage::deleteShaderPackMetadata);
-
-    ui->actionUpdateItem->setMenu(updateMenu);
-
-    ui->actionChangeVersion->setToolTip(tr("Change a shader pack's version."));
-    connect(ui->actionChangeVersion, &QAction::triggered, this, &ShaderPackPage::changeShaderPackVersion);
-    ui->actionsToolbar->insertActionAfter(ui->actionUpdateItem, ui->actionChangeVersion);
-}
+#include "ui/widgets/LabeledToolButton.h"
 
 void ShaderPackPage::downloadShaderPack()
 {
@@ -110,6 +82,35 @@ void ShaderPackPage::downloadShaderPack()
 
         m_model->update();
     }
+}
+ShaderPackPage::ShaderPackPage(MinecraftInstance* instance, std::shared_ptr<ShaderPackFolderModel> model, QWidget* parent)
+    : ExternalResourcesPage(instance, model, parent), m_model(model)
+{
+    ui->actionDownloadItem->setText(tr("Download Packs"));
+    ui->actionDownloadItem->setToolTip(tr("Download shader packs from online mod platforms"));
+    ui->actionDownloadItem->setEnabled(true);
+    ui->actionsToolbar->insertActionBefore(ui->actionAddItem, ui->actionDownloadItem);
+
+    connect(ui->actionDownloadItem, &QAction::triggered, this, &ShaderPackPage::downloadShaderPack);
+
+    ui->actionUpdateItem->setToolTip(tr("Try to check or update all selected shader packs (all shader packs if none are selected)"));
+    ui->actionsToolbar->insertActionBefore(ui->actionAddItem, ui->actionUpdateItem);
+    connect(ui->actionUpdateItem, &QAction::triggered, this, &ShaderPackPage::updateShaderPacks);
+    dynamic_cast<QToolButton*>(ui->actionsToolbar->widgetForAction((ui->actionUpdateItem)))->setPopupMode(QToolButton::MenuButtonPopup);
+
+    auto updateMenu = new QMenu(this);
+
+    auto update = updateMenu->addAction(ui->actionUpdateItem->text());
+    connect(update, &QAction::triggered, this, &ShaderPackPage::updateShaderPacks);
+
+    updateMenu->addAction(ui->actionResetItemMetadata);
+    connect(ui->actionResetItemMetadata, &QAction::triggered, this, &ShaderPackPage::deleteShaderPackMetadata);
+
+    ui->actionUpdateItem->setMenu(updateMenu);
+
+    ui->actionChangeVersion->setToolTip(tr("Change a shader pack's version."));
+    connect(ui->actionChangeVersion, &QAction::triggered, this, &ShaderPackPage::changeShaderPackVersion);
+    ui->actionsToolbar->insertActionAfter(ui->actionUpdateItem, ui->actionChangeVersion);
 }
 
 void ShaderPackPage::updateShaderPacks()
@@ -227,7 +228,7 @@ void ShaderPackPage::changeShaderPackVersion()
     if (rows.count() != 1)
         return;
 
-    Resource &resource = m_model->at(m_filterModel->mapToSource(rows[0]).row());
+    Resource& resource = m_model->at(m_filterModel->mapToSource(rows[0]).row());
 
     if (resource.metadata() == nullptr)
         return;
@@ -235,8 +236,7 @@ void ShaderPackPage::changeShaderPackVersion()
     ResourceDownload::ShaderPackDownloadDialog mdownload(this, m_model, m_instance);
     mdownload.setResourceMetadata(resource.metadata());
     if (mdownload.exec()) {
-        auto tasks =
-            new ConcurrentTask(this, "Download Shader Packs", APPLICATION->settings()->get("NumberOfConcurrentDownloads").toInt());
+        auto tasks = new ConcurrentTask(this, "Download Shader Packs", APPLICATION->settings()->get("NumberOfConcurrentDownloads").toInt());
         connect(tasks, &Task::failed, [this, tasks](QString reason) {
             CustomMessageBox::selectable(this, tr("Error"), reason, QMessageBox::Critical)->show();
             tasks->deleteLater();

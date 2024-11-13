@@ -70,6 +70,7 @@
 #include "tasks/ConcurrentTask.h"
 #include "tasks/Task.h"
 #include "ui/dialogs/ProgressDialog.h"
+#include "ui/widgets/LabeledToolButton.h"
 
 ModFolderPage::ModFolderPage(BaseInstance* inst, std::shared_ptr<ModFolderModel> model, QWidget* parent)
     : ExternalResourcesPage(inst, model, parent), m_model(model)
@@ -84,6 +85,7 @@ ModFolderPage::ModFolderPage(BaseInstance* inst, std::shared_ptr<ModFolderModel>
     ui->actionUpdateItem->setToolTip(tr("Try to check or update all selected mods (all mods if none are selected)"));
     connect(ui->actionUpdateItem, &QAction::triggered, this, &ModFolderPage::updateMods);
     ui->actionsToolbar->insertActionBefore(ui->actionAddItem, ui->actionUpdateItem);
+    dynamic_cast<QToolButton*>(ui->actionsToolbar->widgetForAction((ui->actionUpdateItem)))->setPopupMode(QToolButton::MenuButtonPopup);
 
     auto updateMenu = new QMenu(this);
 
