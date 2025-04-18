@@ -228,6 +228,7 @@ void OtherLogsPage::on_btnReload_clicked()
         ui->text->setModel(nullptr);
         m_model->clear();
         auto line = stream.readLine();
+        MessageLevel::Enum last = MessageLevel::Unknown;
         while (!stream.done()) {  // just read until the model is full or the file ended
             if (line.back() == '\n')
                 line = line.remove(line.size() - 1, 1);
@@ -241,9 +242,10 @@ void OtherLogsPage::on_btnReload_clicked()
 
             // If the level is still undetermined, guess level
             if (level == MessageLevel::StdErr || level == MessageLevel::StdOut || level == MessageLevel::Unknown) {
-                level = m_instance->guessLevel(line, level);
+                level = LogParser::guessLevel(line, last);
             }
 
+            last = level;
             m_model->append(level, line);
             if (m_model->isOverFlow())
                 break;
