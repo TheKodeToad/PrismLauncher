@@ -46,7 +46,6 @@
 #include "AccountData.h"
 #include "AuthSession.h"
 #include "QObjectPtr.h"
-#include "Usable.h"
 #include "minecraft/auth/AuthFlow.h"
 
 class Task;
@@ -74,7 +73,7 @@ struct AccountProfile {
  * Said information may include things such as that account's username, client token, and access
  * token if the user chose to stay logged in.
  */
-class MinecraftAccount : public QObject, public Usable {
+class MinecraftAccount : public QObject {
     Q_OBJECT
    public: /* construction */
     //! Do not copy accounts. ever.
@@ -148,6 +147,8 @@ class MinecraftAccount : public QObject, public Usable {
 
     QString lastError() const { return data.lastError(); }
 
+    bool isInUse() const { return m_useCount > 0; }
+
    signals:
     /**
      * This signal is emitted when the account changes
@@ -158,17 +159,29 @@ class MinecraftAccount : public QObject, public Usable {
 
     // TODO: better signalling for the various possible state changes - especially errors
 
-   protected: /* variables */
+   private:
     AccountData data;
 
     // current task we are executing here
     shared_qobject_ptr<AuthFlow> m_currentTask;
 
-   protected: /* methods */
-    void incrementUses() override;
-    void decrementUses() override;
+    friend class MinecraftAccountLock;
+
+    void incrementUses();
+    void decrementUses();
+
+    size_t m_useCount;
 
    private slots:
     void authSucceeded();
     void authFailed(QString reason);
+};
+
+class MinecraftAccountLock {
+   public:
+    MinecraftAccountLock(MinecraftAccountPtr account) : m_account(std::move(account)) { m_account->incrementUses(); }
+    ~MinecraftAccountLock() { m_account->decrementUses(); }
+
+   private:
+    MinecraftAccountPtr m_account;
 };

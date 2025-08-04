@@ -29,6 +29,6 @@ class ClaimAccount : public LaunchStep {
     bool canAbort() const override { return false; }
 
    private:
-    std::unique_ptr<UseLock> lock;
+    std::unique_ptr<MinecraftAccountLock> m_lock;
     MinecraftAccountPtr m_account;
 };

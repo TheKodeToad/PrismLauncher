@@ -48,9 +48,6 @@ set(CORE_SOURCES
     ResourceDownloadTask.h
     ResourceDownloadTask.cpp
 
-    # Use tracking separate from memory management
-    Usable.h
-
     # Prefix tree where node names are strings between separators
     SeparatorPrefixTree.h
 

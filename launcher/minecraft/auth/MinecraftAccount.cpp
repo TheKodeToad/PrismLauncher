@@ -265,8 +265,7 @@ void MinecraftAccount::fillSession(AuthSessionPtr session)
 
 void MinecraftAccount::decrementUses()
 {
-    Usable::decrementUses();
-    if (!isInUse()) {
+    if (--m_useCount == 0) {
         emit changed();
         // FIXME: we now need a better way to identify accounts...
         qWarning() << "Profile" << data.profileId() << "is no longer in use.";
@@ -276,7 +275,7 @@ void MinecraftAccount::decrementUses()
 void MinecraftAccount::incrementUses()
 {
     bool wasInUse = isInUse();
-    Usable::incrementUses();
+    ++m_useCount;
     if (!wasInUse) {
         emit changed();
         // FIXME: we now need a better way to identify accounts...

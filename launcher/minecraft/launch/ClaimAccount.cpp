@@ -15,12 +15,12 @@ ClaimAccount::ClaimAccount(LaunchTask* parent, AuthSessionPtr session) : LaunchS
 void ClaimAccount::executeTask()
 {
     if (m_account) {
-        lock.reset(new UseLock(m_account));
+        m_lock = std::make_unique<MinecraftAccountLock>(m_account);
         emitSucceeded();
     }
 }
 
 void ClaimAccount::finalize()
 {
-    lock.reset();
+    m_lock.reset();
 }
