@@ -172,6 +172,8 @@ struct TranslationsModel::Private {
     const QString m_system_language = m_system_locale.split('_').front();
 
     bool no_language_set = false;
+
+    QString m_cppLocale;
 };
 
 TranslationsModel::TranslationsModel(QString path, QObject* parent) : QAbstractListModel(parent)
@@ -184,6 +186,26 @@ TranslationsModel::TranslationsModel(QString path, QObject* parent) : QAbstractL
     d->watcher = new QFileSystemWatcher(this);
     connect(d->watcher, &QFileSystemWatcher::directoryChanged, this, &TranslationsModel::translationDirChanged);
     d->watcher->addPath(d->m_dir.canonicalPath());
+
+    d->m_cppLocale = QString::fromStdString(std::locale().name());
+    {
+        const char* utf8_locales[] = { ".UTF-8", "en_US.UTF-8", "C.UTF-8" };
+        bool localeWasSet = false;
+        for (auto name : utf8_locales) {
+            if (!localeWasSet && std::setlocale(LC_ALL, name)) {
+                try {
+                    std::locale::global(std::locale(name));
+                    localeWasSet = true;
+                    break;
+                } catch (...) {
+                    // ignore
+                }
+            }
+        }
+        if (!localeWasSet) {
+            qCritical() << "Failed to set the global locale to utf-8";
+        }
+    }
 }
 
 TranslationsModel::~TranslationsModel() {}
@@ -433,7 +455,7 @@ std::optional<Language> TranslationsModel::findLanguageAsOptional(const QString&
 void TranslationsModel::setUseSystemLocale(bool useSystemLocale)
 {
     APPLICATION->settings()->set("UseSystemLocale", useSystemLocale);
-    QLocale::setDefault(QLocale(useSystemLocale ? QString::fromStdString(std::locale().name()) : defaultLangCode));
+    QLocale::setDefault(QLocale(useSystemLocale ? d->m_cppLocale : defaultLangCode));
 }
 
 bool TranslationsModel::selectLanguage(QString key)
@@ -467,8 +489,7 @@ bool TranslationsModel::selectLanguage(QString key)
      * In a multithreaded application, the default locale should be set at application startup, before any non-GUI threads are created.
      * This function is not reentrant.
      */
-    QLocale::setDefault(
-        QLocale(APPLICATION->settings()->get("UseSystemLocale").toBool() ? QString::fromStdString(std::locale().name()) : langCode));
+    QLocale::setDefault(QLocale(APPLICATION->settings()->get("UseSystemLocale").toBool() ? d->m_cppLocale : langCode));
 
     // if it's the default UI language, finish
     if (langCode == defaultLangCode) {
