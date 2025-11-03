@@ -38,7 +38,11 @@ bool ArchiveReader::collectFiles(bool onlyFiles)
 
 QString ArchiveReader::File::filename()
 {
+#ifdef Q_OS_WINDOWS
+    return QString::fromUtf16((const char16_t *)archive_entry_pathname_w(m_entry));
+#else
     return QString::fromUtf8(archive_entry_pathname(m_entry));
+#endif
 }
 
 QByteArray ArchiveReader::File::readAll(int* outStatus)
