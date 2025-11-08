@@ -1406,7 +1406,8 @@ Application::~Application()
 void Application::messageReceived(const QByteArray& message)
 {
     ApplicationMessage received;
-    received.parse(message);
+    if (!received.parse(message))
+        return;
 
     auto& command = received.command;
 

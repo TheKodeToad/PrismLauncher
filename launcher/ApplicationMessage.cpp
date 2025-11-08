@@ -35,22 +35,35 @@
 
 #include "ApplicationMessage.h"
 
+#include <QDebug>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include "Json.h"
 
-void ApplicationMessage::parse(const QByteArray& input)
+bool ApplicationMessage::parse(const QByteArray& input)
 {
-    auto doc = Json::requireDocument(input, "ApplicationMessage");
-    auto root = Json::requireObject(doc, "ApplicationMessage");
+    QJsonParseError error;
+    auto doc = QJsonDocument::fromJson(input, &error).object();
 
-    command = root.value("command").toString();
+    if (error.error != QJsonParseError::NoError) {
+        qWarning() << "Could not parse ApplicationMessage:" << error.errorString();
+        return false;
+    }
+
+    command = doc["command"].toString();
+
+    if (command.isEmpty()) {
+        qWarning() << "Could not parse ApplicationMessage: missing command";
+        return false;
+    }
+
     args.clear();
 
-    auto parsedArgs = root.value("args").toObject();
+    auto parsedArgs = doc["args"].toObject();
     for (auto iter = parsedArgs.constBegin(); iter != parsedArgs.constEnd(); iter++) {
         args.insert(iter.key(), iter.value().toString());
     }
+
+    return true;
 }
 
 QByteArray ApplicationMessage::serialize()
@@ -63,5 +76,5 @@ QByteArray ApplicationMessage::serialize()
     }
     root.insert("args", outArgs);
 
-    return Json::toText(root);
+    return QJsonDocument(root).toJson(QJsonDocument::Compact);
 }
