@@ -47,7 +47,7 @@
 
 #include "Exception.h"
 
-namespace Json {
+namespace [[deprecated]] Json {
 class JsonException : public ::Exception {
    public:
     JsonException(const QString& message) : Exception(message) {}
