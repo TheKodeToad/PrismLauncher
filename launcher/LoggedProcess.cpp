@@ -39,8 +39,12 @@
 #include <QStringDecoder>
 #include "MessageLevel.h"
 
-LoggedProcess::LoggedProcess(const QStringConverter::Encoding output_codec, QObject* parent)
-    : QProcess(parent), m_err_decoder(output_codec), m_out_decoder(output_codec)
+#ifdef Q_OS_WIN32
+#include "windows/WindowsAppContainer.h"
+#endif
+
+LoggedProcess::LoggedProcess(const QStringConverter::Encoding output_codec, const bool withSandboxing, QObject* parent)
+    : QProcess(parent), m_err_decoder(output_codec), m_out_decoder(output_codec), m_sandboxing(withSandboxing)
 {
     // QProcess has a strange interface... let's map a lot of those into a few.
     connect(this, &QProcess::readyReadStandardOutput, this, &LoggedProcess::on_stdOut);
@@ -48,6 +52,15 @@ LoggedProcess::LoggedProcess(const QStringConverter::Encoding output_codec, QObj
     connect(this, &QProcess::finished, this, &LoggedProcess::on_exit);
     connect(this, &QProcess::errorOccurred, this, &LoggedProcess::on_error);
     connect(this, &QProcess::stateChanged, this, &LoggedProcess::on_stateChange);
+
+#ifdef Q_OS_WIN32
+    auto appContainerResult = WindowsAppContainer::create();
+    if (!appContainerResult) {
+        qFatal() << "Could not create AppContainer:" << Qt::hex << appContainerResult.error(); // TODO: better handling
+    }
+    m_appContainer = std::move(appContainerResult.value());
+    m_appContainer->attach(this);
+#endif
 }
 
 LoggedProcess::~LoggedProcess()
@@ -177,4 +190,9 @@ void LoggedProcess::on_stateChange(QProcess::ProcessState state)
 void LoggedProcess::setDetachable(bool detachable)
 {
     m_is_detachable = detachable;
+}
+
+WindowsAppContainer* LoggedProcess::appContainer() const
+{
+    return m_appContainer.get();
 }

@@ -592,6 +592,11 @@ set(ATLAUNCHER_SOURCES
     modplatform/atlauncher/ATLShareCode.h
 )
 
+set(SANDBOX_SOURCES
+    windows/WindowsAppContainer.cpp
+    windows/WindowsAppContainer.h
+)
+
 set(LINKEXE_SOURCES
     console/WindowsConsole.h
     console/WindowsConsole.cpp
@@ -782,6 +787,7 @@ set(LOGIC_SOURCES
     ${PACKWIZ_SOURCES}
     ${TECHNIC_SOURCES}
     ${ATLAUNCHER_SOURCES}
+    ${SANDBOX_SOURCES}
 )
 
 if(APPLE AND Launcher_ENABLE_UPDATER)
@@ -1281,6 +1287,12 @@ if(TARGET PkgConfig::libarchive)
     target_link_libraries(Launcher_logic PkgConfig::libarchive)
 else()
     target_link_libraries(Launcher_logic LibArchive::LibArchive)
+endif()
+
+if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    target_link_libraries(Launcher_logic
+        windowsapp # Required for DeriveCapabilitySidsFromName
+    )
 endif()
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Linux")

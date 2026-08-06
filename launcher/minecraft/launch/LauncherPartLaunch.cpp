@@ -43,6 +43,7 @@
 #include "FileSystem.h"
 #include "launch/LaunchTask.h"
 #include "minecraft/MinecraftInstance.h"
+#include "windows/WindowsAppContainer.h"
 
 #ifdef Q_OS_LINUX
 #include "gamemode_client.h"
@@ -50,7 +51,7 @@
 
 LauncherPartLaunch::LauncherPartLaunch(LaunchTask* parent)
     : LaunchStep(parent)
-    , m_process(parent->instance()->getJavaVersion().defaultsToUtf8() ? QStringConverter::Utf8 : QStringConverter::System)
+    , m_process(parent->instance()->getJavaVersion().defaultsToUtf8() ? QStringConverter::Utf8 : QStringConverter::System, true)
 {
     if (parent->instance()->settings()->get("CloseAfterLaunch").toBool()) {
         static const QRegularExpression s_settingUser(".*Setting user.+", QRegularExpression::CaseInsensitiveOption);
@@ -105,10 +106,14 @@ void LauncherPartLaunch::executeTask()
     m_process.setDetachable(true);
 
     auto classPath = instance->getClassPath();
+    QStringList extraSandboxPaths;
     classPath.prepend(jarPath);
+    extraSandboxPaths.prepend(jarPath);
 
-    if (!legacyJarPath.isEmpty())
+    if (!legacyJarPath.isEmpty()) {
         classPath.prepend(legacyJarPath);
+        extraSandboxPaths.prepend(legacyJarPath);
+    }
 
     auto natPath = instance->getNativePath();
 #ifdef Q_OS_WIN
@@ -127,6 +132,8 @@ void LauncherPartLaunch::executeTask()
     args << classPath.join(':');
 #endif
     args << "org.prismlauncher.EntryPoint";
+
+    setupSandbox(javaPath, extraSandboxPaths);
 
     qDebug() << args.join(' ');
 
@@ -207,6 +214,30 @@ void LauncherPartLaunch::on_state(LoggedProcess::State state)
         default:
             break;
     }
+}
+
+void LauncherPartLaunch::setupSandbox(const QString& javaPath, const QStringList& extraPaths) const
+{
+    auto splitPath = javaPath.split('/'); // java/bin/javaw.exe
+    splitPath.removeLast(); // java/bin
+    splitPath.removeLast(); // java
+    auto grantOrFatal = [this](const QString& path, const bool write) { // TODO: handle better
+        if (QFileInfo::exists(path)) {
+            if (auto result = m_process.appContainer()->grantFileSystemAccess(path, write ? WindowsAppContainer::AccessMode::ReadWrite : WindowsAppContainer::AccessMode::Read); !result) {
+                qFatal() << "Unable to grant filesystem access to" << path << "-" << result.error().message();
+            }
+        }
+    };
+    grantOrFatal(splitPath.join('/'), false);
+
+    for (const QString& path : extraPaths) {
+        grantOrFatal(path, false);
+    }
+    grantOrFatal(m_parent->instance()->librariesPath().path(), true); // Write access needed for ForgeWrapper
+    grantOrFatal(m_parent->instance()->getNativePath(), false);
+    grantOrFatal(QDir::current().absoluteFilePath("assets"), false);
+    grantOrFatal(QDir::current().absoluteFilePath("assets/skins"), true);
+    grantOrFatal(m_process.workingDirectory(), true);
 }
 
 void LauncherPartLaunch::setWorkingDirectory(const QString& wd)

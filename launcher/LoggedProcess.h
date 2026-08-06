@@ -39,6 +39,8 @@
 #include <QStringDecoder>
 #include "MessageLevel.h"
 
+class WindowsAppContainer;
+
 /*
  * This is a basic process.
  * It has line-based logging support and hides some of the nasty bits.
@@ -49,13 +51,15 @@ class LoggedProcess : public QProcess {
     enum State { NotRunning, Starting, FailedToStart, Running, Finished, Crashed, Aborted };
 
    public:
-    explicit LoggedProcess(QStringConverter::Encoding outputEncoding = QStringConverter::System, QObject* parent = nullptr);
+    explicit LoggedProcess(QStringConverter::Encoding outputEncoding = QStringConverter::System, bool withSandboxing = false, QObject* parent = nullptr);
     virtual ~LoggedProcess();
 
     State state() const;
     int exitCode() const;
 
     void setDetachable(bool detachable);
+
+    WindowsAppContainer* appContainer() const;
 
    signals:
     void log(QStringList lines, MessageLevel level);
@@ -88,4 +92,7 @@ class LoggedProcess : public QProcess {
     int m_exit_code = 0;
     bool m_is_aborting = false;
     bool m_is_detachable = false;
+
+    bool m_sandboxing = false;
+    std::unique_ptr<WindowsAppContainer> m_appContainer;
 };

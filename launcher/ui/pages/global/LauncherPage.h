@@ -78,6 +78,7 @@ class LauncherPage : public QWidget, public BasePage {
     void on_javaDirBrowseBtn_clicked();
     void on_skinsDirBrowseBtn_clicked();
     void on_metadataEnableBtn_clicked();
+    void on_resetSandboxBtn_clicked();
 
    private:
     Ui::LauncherPage* ui;

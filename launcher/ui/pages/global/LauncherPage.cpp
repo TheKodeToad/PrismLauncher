@@ -57,6 +57,8 @@
 #include <QApplication>
 #include <QProcess>
 
+#include "windows/WindowsAppContainer.h"
+
 // FIXME: possibly move elsewhere
 enum InstSortMode {
     // Sort alphabetically by name.
@@ -217,6 +219,14 @@ void LauncherPage::on_skinsDirBrowseBtn_clicked()
 void LauncherPage::on_metadataEnableBtn_clicked()
 {
     ui->metadataWarningLabel->setHidden(ui->metadataEnableBtn->isChecked());
+}
+
+void LauncherPage::on_resetSandboxBtn_clicked()
+{
+    const auto result = WindowsAppContainer::deleteProfile();
+    if (!result) {
+        qFatal() << "Unable to delete profile:" << Qt::hex << result.error();
+    }
 }
 
 void LauncherPage::applySettings()
