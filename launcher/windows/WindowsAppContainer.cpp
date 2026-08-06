@@ -65,7 +65,7 @@ std::expected<STARTUPINFOEXW*, std::error_code> WindowsAppContainer::createStart
     constexpr DWORD attributesCount = 1;
     SIZE_T attributesSize = 0;
 
-    const WINBOOL result = InitializeProcThreadAttributeList(nullptr, attributesCount, 0, &attributesSize);
+    const BOOL result = InitializeProcThreadAttributeList(nullptr, attributesCount, 0, &attributesSize);
     // https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-initializeprocthreadattributelist#remarks
     Q_ASSERT(result == FALSE);
     if (const auto error = GetLastError(); error != ERROR_INSUFFICIENT_BUFFER) {
@@ -262,7 +262,7 @@ std::expected<bool, std::error_code> WindowsAppContainer::aclsEqual(PACL acl1, P
         return false;
     }
 
-    for (size_t i = 0; i < acl1->AceCount; ++i) {
+    for (WORD i = 0; i < acl1->AceCount; ++i) {
         void* ace1{};
         void* ace2{};
         if (GetAce(acl1, i, &ace1) == FALSE || GetAce(acl2, i, &ace2) == FALSE) {
