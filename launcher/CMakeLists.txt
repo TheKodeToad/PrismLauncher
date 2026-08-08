@@ -794,6 +794,10 @@ SET(LAUNCHER_SOURCES
     HardwareInfo.cpp
     HardwareInfo.h
 
+    # Configuration
+    config/GlobalConfig.h
+    config/GlobalConfig.cpp
+
     # console utils
     console/Console.h
 
