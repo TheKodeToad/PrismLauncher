@@ -80,8 +80,8 @@ BaseInstance::BaseInstance(const GlobalConfig& globalConf, std::unique_ptr<Setti
 
     // Game time override
     auto gameTimeOverride = m_settings->registerSetting("OverrideGameTime", false);
-    m_settings->registerOverride(globalSettings->getSetting("ShowGameTime"), gameTimeOverride);
-    m_settings->registerOverride(globalSettings->getSetting("RecordGameTime"), gameTimeOverride);
+    m_settings->registerOverride({ "ShowGameTime" }, [&globalConf] { return globalConf.showGameTime; }, gameTimeOverride);
+    m_settings->registerOverride({ "RecordGameTime" }, [&globalConf] { return globalConf.recordGameTime; }, gameTimeOverride);
     m_settings->registerSetting("CountGameTime", true);
 
     // NOTE: Sometimees InstanceType is already registered, as it was used to identify the type of
@@ -92,19 +92,16 @@ BaseInstance::BaseInstance(const GlobalConfig& globalConf, std::unique_ptr<Setti
 
     // Custom Commands
     auto commandSetting = m_settings->registerSetting({ "OverrideCommands", "OverrideLaunchCmd" }, false);
-    m_settings->registerOverride(globalSettings->getSetting("PreLaunchCommand"), commandSetting);
-    m_settings->registerOverride(globalSettings->getSetting("WrapperCommand"), commandSetting);
-    m_settings->registerOverride(globalSettings->getSetting("PostExitCommand"), commandSetting);
+    m_settings->registerOverride({ "PreLaunchCommand" }, [&globalConf] { return globalConf.preLaunchCommand; }, commandSetting);
+    m_settings->registerOverride({ "WrapperCommand" }, [&globalConf] { return globalConf.wrapperCommand; }, commandSetting);
+    m_settings->registerOverride({ "PostExitCommand" }, [&globalConf] { return globalConf.postExitCommand; }, commandSetting);
 
     // Console
     auto consoleSetting = m_settings->registerSetting("OverrideConsole", false);
-    m_settings->registerOverride(globalSettings->getSetting("ShowConsole"), consoleSetting);
-    m_settings->registerOverride(globalSettings->getSetting("AutoCloseConsole"), consoleSetting);
-    m_settings->registerOverride(globalSettings->getSetting("ShowConsoleOnError"), consoleSetting);
-    m_settings->registerOverride(globalSettings->getSetting("LogPrePostOutput"), consoleSetting);
-
-    m_settings->registerPassthrough(globalSettings->getSetting("ConsoleMaxLines"), nullptr);
-    m_settings->registerPassthrough(globalSettings->getSetting("ConsoleOverflowStop"), nullptr);
+    m_settings->registerOverride({ "ShowConsole" }, [&globalConf] { return globalConf.showConsole; }, consoleSetting);
+    m_settings->registerOverride({ "AutoCloseConsole" }, [&globalConf] { return globalConf.autoCloseConsole; }, consoleSetting);
+    m_settings->registerOverride({ "ShowConsoleOnError" }, [&globalConf] { return globalConf.showConsoleOnError; }, consoleSetting);
+    m_settings->registerOverride({ "LogPrePostOutput" }, [&globalConf] { return globalConf.logPrePostOutput; }, consoleSetting);
 
     // Managed Packs
     m_settings->registerSetting("ManagedPack", false);
