@@ -44,6 +44,7 @@
 #include <QScrollBar>
 #include <QTimer>
 
+#include "config/GlobalConfig.h"
 #include "ui/widgets/PageContainer.h"
 
 #include "InstancePageProvider.h"
@@ -124,10 +125,8 @@ InstanceWindow::InstanceWindow(MinecraftInstance* instance, QWidget* parent) : Q
 
     // restore window state
     {
-        auto base64State = APPLICATION->settings()->get("ConsoleWindowState").toString().toUtf8();
-        restoreState(QByteArray::fromBase64(base64State));
-        auto base64Geometry = APPLICATION->settings()->get("ConsoleWindowGeometry").toString().toUtf8();
-        restoreGeometry(QByteArray::fromBase64(base64Geometry));
+        restoreState(APPLICATION->config().uiGeometry.value("ConsoleWindow"));
+        restoreGeometry(APPLICATION->config().uiGeometry.value("ConsoleWindow"));
     }
 
     // set up instance and launch process recognition
@@ -221,8 +220,10 @@ void InstanceWindow::closeEvent(QCloseEvent* event)
         return;
     }
 
-    APPLICATION->settings()->set("ConsoleWindowState", QString::fromUtf8(saveState().toBase64()));
-    APPLICATION->settings()->set("ConsoleWindowGeometry", QString::fromUtf8(saveGeometry().toBase64()));
+    auto& conf = APPLICATION->updateConfig();
+    conf.uiState["ConsoleWindow"] = saveState();
+    conf.uiGeometry["ConsoleWindow"] = saveGeometry();
+
     emit isClosing();
     event->accept();
 }

@@ -101,6 +101,4 @@ class ServersPage : public QMainWindow, public BasePage {
     Ui::ServersPage* ui = nullptr;
     ServersModel* m_model = nullptr;
     MinecraftInstance* m_inst = nullptr;
-
-    std::shared_ptr<Setting> m_wide_bar_setting = nullptr;
 };

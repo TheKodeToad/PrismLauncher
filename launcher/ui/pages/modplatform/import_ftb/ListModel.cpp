@@ -22,13 +22,15 @@
 #include <QFileInfo>
 #include <QIcon>
 #include <QProcessEnvironment>
+#include <utility>
 #include "Application.h"
-#include "settings/SettingsObject.h"
 #include "Exception.h"
 #include "FileSystem.h"
+#include "config/GlobalConfig.h"
 #include "Json.h"
 #include "StringUtils.h"
 #include "modplatform/import_ftb/PackHelpers.h"
+#include "settings/SettingsObject.h"
 #include "ui/widgets/ProjectItem.h"
 
 namespace FTBImportAPP {
@@ -92,7 +94,7 @@ void ListModel::update()
         }
     };
 
-    scanPath(APPLICATION->settings()->get("FTBAppInstancesPath").toString());
+    scanPath(APPLICATION->config().ftbAppInstancesPath);
     scanPath(m_instances_path);
 
     endResetModel();
@@ -204,13 +206,13 @@ FilterModel::Sorting FilterModel::getCurrentSorting()
 }
 void ListModel::setPath(QString path)
 {
-    APPLICATION->settings()->set("FTBAppInstancesPath", path);
+    APPLICATION->updateConfig().ftbAppInstancesPath = std::move(path);
     update();
 }
 
 QString ListModel::getUserPath()
 {
-    auto path = APPLICATION->settings()->get("FTBAppInstancesPath").toString();
+    auto path = APPLICATION->config().ftbAppInstancesPath;
     if (path.isEmpty())
         path = m_instances_path;
     return path;

@@ -36,6 +36,7 @@
 
 #include "LaunchController.h"
 #include "Application.h"
+#include "config/GlobalConfig.h"
 #include "launch/steps/PrintServers.h"
 #include "minecraft/auth/AccountData.h"
 #include "minecraft/auth/AccountList.h"
@@ -256,7 +257,7 @@ QString LaunchController::askOfflineName(const QString& playerName, bool* ok)
             break;
     }
 
-    const QString lastOfflinePlayerName = APPLICATION->settings()->get("LastOfflinePlayerName").toString();
+    const QString& lastOfflinePlayerName = APPLICATION->config().lastOfflinePlayerName;
     QString usedname = lastOfflinePlayerName.isEmpty() ? playerName : lastOfflinePlayerName;
 
     ChooseOfflineNameDialog dialog(message, m_parentWidget);
@@ -267,7 +268,7 @@ QString LaunchController::askOfflineName(const QString& playerName, bool* ok)
     }
 
     usedname = dialog.getUsername();
-    APPLICATION->settings()->set("LastOfflinePlayerName", usedname);
+    APPLICATION->updateConfig().lastOfflinePlayerName = usedname;
 
     if (ok != nullptr) {
         *ok = true;
@@ -430,7 +431,7 @@ void LaunchController::readyForLaunch()
         QMessageBox::critical(m_parentWidget, tr("Error!"), tr("Profiler check for %1 failed: %2").arg(m_profiler->name(), error));
         return;
     }
-    BaseProfiler* profilerInstance = m_profiler->createProfiler(m_launcher->instance(), this);
+    BaseProfiler* profilerInstance = m_profiler->createProfiler(this);
 
     connect(profilerInstance, &BaseProfiler::readyToLaunch, this, [this](const QString& message) {
         QMessageBox msg(m_parentWidget);

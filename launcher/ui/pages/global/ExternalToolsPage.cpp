@@ -34,12 +34,14 @@
  */
 
 #include "ExternalToolsPage.h"
+#include "config/GlobalConfig.h"
 #include "ui_ExternalToolsPage.h"
 
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QStandardPaths>
 #include <QTabBar>
+#include <utility>
 
 #include <FileSystem.h>
 #include <tools/MCEditTool.h>
@@ -66,21 +68,21 @@ ExternalToolsPage::~ExternalToolsPage()
 
 void ExternalToolsPage::loadSettings()
 {
-    auto s = APPLICATION->settings();
-    ui->jprofilerPathEdit->setText(s->get("JProfilerPath").toString());
-    ui->jvisualvmPathEdit->setText(s->get("JVisualVMPath").toString());
-    ui->mceditPathEdit->setText(s->get("MCEditPath").toString());
+    const auto& conf = APPLICATION->config();
+    ui->jprofilerPathEdit->setText(conf.jProfilerPath);
+    ui->jvisualvmPathEdit->setText(conf.jVisualVmPath);
+    ui->mceditPathEdit->setText(conf.mcEditPath);
 
     // Editors
-    ui->jsonEditorTextBox->setText(s->get("JsonEditor").toString());
+    ui->jsonEditorTextBox->setText(conf.jsonEditorPath);
 }
 void ExternalToolsPage::applySettings()
 {
-    auto s = APPLICATION->settings();
+    auto& conf = APPLICATION->updateConfig();
 
-    s->set("JProfilerPath", ui->jprofilerPathEdit->text());
-    s->set("JVisualVMPath", ui->jvisualvmPathEdit->text());
-    s->set("MCEditPath", ui->mceditPathEdit->text());
+    conf.jProfilerPath = ui->jprofilerPathEdit->text();
+    conf.jVisualVmPath = ui->jvisualvmPathEdit->text();
+    conf.mcEditPath = ui->mceditPathEdit->text();
 
     // Editors
     QString jsonEditor = ui->jsonEditorTextBox->text();
@@ -90,7 +92,7 @@ void ExternalToolsPage::applySettings()
             jsonEditor = found;
         }
     }
-    s->set("JsonEditor", jsonEditor);
+    conf.jsonEditorPath = std::move(jsonEditor);
 }
 
 void ExternalToolsPage::on_jprofilerPathBtn_clicked()
@@ -165,7 +167,7 @@ void ExternalToolsPage::on_mceditPathBtn_clicked()
             break;
         }
         QString cooked_dir = FS::NormalizePath(raw_dir);
-        if (!APPLICATION->mcedit()->check(cooked_dir, error)) {
+        if (!MCEditTool::check(cooked_dir, error)) {
             QMessageBox::critical(this, tr("Error"), tr("Error while checking MCEdit install:\n%1").arg(error));
             continue;
         } else {
@@ -177,7 +179,7 @@ void ExternalToolsPage::on_mceditPathBtn_clicked()
 void ExternalToolsPage::on_mceditCheckBtn_clicked()
 {
     QString error;
-    if (!APPLICATION->mcedit()->check(ui->mceditPathEdit->text(), error)) {
+    if (!MCEditTool::check(ui->mceditPathEdit->text(), error)) {
         QMessageBox::critical(this, tr("Error"), tr("Error while checking MCEdit install:\n%1").arg(error));
     } else {
         QMessageBox::information(this, tr("OK"), tr("MCEdit setup seems to be OK"));

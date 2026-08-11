@@ -1,5 +1,6 @@
 #include "LanguageWizardPage.h"
 #include <Application.h>
+#include "config/GlobalConfig.h"
 #include "settings/SettingsObject.h"
 #include <translations/TranslationsModel.h>
 
@@ -33,9 +34,8 @@ void LanguageWizardPage::refresh()
 
 bool LanguageWizardPage::validatePage()
 {
-    auto settings = APPLICATION->settings();
     QString key = mainWidget->getSelectedLanguageKey();
-    settings->set("Language", key);
+    APPLICATION->updateConfig().language = key;
     return true;
 }
 

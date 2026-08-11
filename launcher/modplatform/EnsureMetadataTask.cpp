@@ -4,6 +4,7 @@
 #include <QDebug>
 
 #include "Application.h"
+#include "config/GlobalConfig.h"
 #include "Json.h"
 
 #include "QObjectPtr.h"
@@ -30,7 +31,7 @@ EnsureMetadataTask::EnsureMetadataTask(Resource* resource, QDir dir, ModPlatform
 EnsureMetadataTask::EnsureMetadataTask(QList<Resource*>& resources, QDir dir, ModPlatform::ResourceProvider prov)
     : Task(), m_indexDir(dir), m_provider(prov), m_currentTask(nullptr)
 {
-    auto hashTask = makeShared<ConcurrentTask>("MakeHashesTask", APPLICATION->settings()->get("NumberOfConcurrentTasks").toInt());
+    auto hashTask = makeShared<ConcurrentTask>("MakeHashesTask", APPLICATION->config().numberOfConcurrentTasks);
     m_hashingTask = hashTask;
     for (auto* resource : resources) {
         auto hash_task = createNewHash(resource);

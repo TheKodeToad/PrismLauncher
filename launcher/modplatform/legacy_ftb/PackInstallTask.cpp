@@ -132,9 +132,9 @@ void PackInstallTask::install()
 
     QString instanceConfigPath = FS::PathCombine(m_stagingPath, "instance.cfg");
     m_instance =
-        std::make_unique<MinecraftInstance>(m_globalSettings, std::make_unique<INISettingsObject>(instanceConfigPath), m_stagingPath);
+        std::make_unique<MinecraftInstance>(*m_globalConfig, std::make_unique<INISettingsObject>(instanceConfigPath), m_stagingPath);
     {
-        SettingsObject::Lock const lock(m_instance->settings());
+        const SettingsObject::Lock lock(m_instance->settings());
 
         auto* components = m_instance->getPackProfile();
         components->buildingFromScratch();

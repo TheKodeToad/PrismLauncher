@@ -244,7 +244,7 @@ void PackInstallTask::createInstance()
     auto instanceConfigPath = FS::PathCombine(m_stagingPath, "instance.cfg");
     auto instanceSettings = std::make_unique<INISettingsObject>(instanceConfigPath);
 
-    m_instance = std::make_unique<MinecraftInstance>(m_globalSettings, std::move(instanceSettings), m_stagingPath);
+    m_instance = std::make_unique<MinecraftInstance>(*m_globalConfig, std::move(instanceSettings), m_stagingPath);
     auto* components = m_instance->getPackProfile();
     components->buildingFromScratch();
 

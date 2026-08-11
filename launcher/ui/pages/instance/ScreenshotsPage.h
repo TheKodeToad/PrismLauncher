@@ -94,6 +94,4 @@ class ScreenshotsPage : public QMainWindow, public BasePage {
     QString m_folder;
     bool m_valid = false;
     bool m_uploadActive = false;
-
-    std::shared_ptr<Setting> m_wide_bar_setting = nullptr;
 };

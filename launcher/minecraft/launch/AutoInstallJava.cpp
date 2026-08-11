@@ -40,6 +40,7 @@
 
 #include "Application.h"
 #include "FileSystem.h"
+#include "config/GlobalConfig.h"
 #include "MessageLevel.h"
 #include "QObjectPtr.h"
 #include "SysInfo.h"
@@ -62,13 +63,13 @@ AutoInstallJava::AutoInstallJava(LaunchTask* parent)
 void AutoInstallJava::executeTask()
 {
     auto settings = m_instance->settings();
-    if (!APPLICATION->settings()->get("AutomaticJavaSwitch").toBool() ||
+    if (!APPLICATION->config().automaticJavaSwitch ||
         (settings->get("OverrideJavaLocation").toBool() && QFileInfo::exists(settings->get("JavaPath").toString()))) {
         emitSucceeded();
         return;
     }
     auto packProfile = m_instance->getPackProfile();
-    if (!APPLICATION->settings()->get("AutomaticJavaDownload").toBool()) {
+    if (!APPLICATION->config().automaticJavaDownload) {
         auto javas = APPLICATION->javalist();
         m_current_task = javas->getLoadTask();
         connect(m_current_task.get(), &Task::finished, this, [this, javas, packProfile] {

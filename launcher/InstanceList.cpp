@@ -54,6 +54,7 @@
 #include "ExponentialSeries.h"
 #include "FileSystem.h"
 
+#include "config/GlobalConfig.h"
 #include "InstanceTask.h"
 #include "NullInstance.h"
 #include "WatchLock.h"
@@ -66,8 +67,7 @@
 
 const static int g_GROUP_FILE_FORMAT_VERSION = 1;
 
-InstanceList::InstanceList(SettingsObject* settings, const QStringList& instDirs, QObject* parent)
-    : QAbstractListModel(parent), m_globalSettings(settings)
+InstanceList::InstanceList(const QStringList& instDirs, QObject* parent) : QAbstractListModel(parent)
 {
     resumeWatch();
 
@@ -584,7 +584,7 @@ InstanceList::InstListError InstanceList::loadList()
 
 void InstanceList::migrateTotalPlayTime()
 {
-    if (APPLICATION->playtimeSettings()->get("TotalPlayTimeMigrated").toBool()) {
+    if (APPLICATION->config().totalPlayTimeMigrated) {
         return;
     }
 
@@ -595,9 +595,9 @@ void InstanceList::migrateTotalPlayTime()
         }
     }
 
-    qint64 current = APPLICATION->playtimeSettings()->get("TotalPlayTime").toLongLong();
-    APPLICATION->playtimeSettings()->set("TotalPlayTime", current + existingTotal);
-    APPLICATION->playtimeSettings()->set("TotalPlayTimeMigrated", true);
+    auto& conf = APPLICATION->updateConfig();
+    conf.totalPlayTime += existingTotal;
+    conf.totalPlayTimeMigrated = true;
 
     qDebug() << "Migrated" << existingTotal << "seconds of existing instance playtime into global TotalPlayTime.";
 }
@@ -714,7 +714,7 @@ std::unique_ptr<MinecraftInstance> InstanceList::loadInstance(const InstanceId& 
         return nullptr;
     }
 
-    auto inst = std::make_unique<MinecraftInstance>(m_globalSettings, std::move(instanceSettings), instanceRoot);
+    auto inst = std::make_unique<MinecraftInstance>(APPLICATION->config(), std::move(instanceSettings), instanceRoot);
     qDebug() << "Loaded instance" << inst->name() << "from" << inst->instanceRoot();
 
     auto shortcut = inst->shortcuts();
@@ -912,10 +912,16 @@ void InstanceList::instanceDirContentsChanged(const QString& path)
     emit instancesChanged();
 }
 
-void InstanceList::on_InstFolderChanged([[maybe_unused]] const Setting& setting, [[maybe_unused]] const QVariant& value)
+void InstanceList::onConfigUpdate()
 {
-    QString instDir = m_globalSettings->get("InstanceDir").toString();
-    QStringList additionalDirs = m_globalSettings->get("AdditionalInstanceDirs").toStringList();
+    const QString& instDir = APPLICATION->config().instanceDir;
+    const QStringList& additionalDirs = APPLICATION->config().additionalInstanceDirs;
+
+    if (!m_instDirs.isEmpty() && std::equal(additionalDirs.begin(), additionalDirs.end(), m_instDirs.begin() + 1, m_instDirs.end())) {
+        // NOTE: this is fired for every config change
+        // avoid always recomputing canonical paths...
+        return;
+    }
 
     QStringList newDirs;
     QStringList candidates;
@@ -929,21 +935,23 @@ void InstanceList::on_InstFolderChanged([[maybe_unused]] const Setting& setting,
             newDirs << canonical;
     }
 
-    if (newDirs != m_instDirs) {
-        if (m_groupsLoaded) {
-            saveGroupList();
-        }
-        for (const auto& dir : m_instDirs)
-            m_watcher->removePath(dir);
-        m_instDirs = newDirs;
-        for (const auto& dir : m_instDirs)
-            m_watcher->addPath(dir);
-        m_groupsLoaded = false;
-        beginRemoveRows(QModelIndex(), 0, count());
-        m_instances.erase(m_instances.begin(), m_instances.end());
-        endRemoveRows();
-        emit instancesChanged();
+    if (newDirs == m_instDirs) {
+        return;
     }
+
+    if (m_groupsLoaded) {
+        saveGroupList();
+    }
+    for (const auto& dir : m_instDirs)
+        m_watcher->removePath(dir);
+    m_instDirs = newDirs;
+    for (const auto& dir : m_instDirs)
+        m_watcher->addPath(dir);
+    m_groupsLoaded = false;
+    beginRemoveRows(QModelIndex(), 0, count());
+    m_instances.erase(m_instances.begin(), m_instances.end());
+    endRemoveRows();
+    emit instancesChanged();
 }
 
 void InstanceList::on_GroupStateChanged(const QString& group, bool collapsed)
@@ -965,7 +973,7 @@ class InstanceStaging : public Task {
     const unsigned maxBackoff = 16;
 
    public:
-    InstanceStaging(InstanceList* parent, InstanceTask* child, SettingsObject* settings)
+    InstanceStaging(InstanceList* parent, InstanceTask* child, const GlobalConfig& globalConf)
         : m_parent(parent), m_backoff(minBackoff, maxBackoff)
     {
         m_stagingPath = parent->getStagedInstancePath(child->targetDir());
@@ -973,7 +981,7 @@ class InstanceStaging : public Task {
         m_child.reset(child);
 
         m_child->setStagingPath(m_stagingPath);
-        m_child->setParentSettings(settings);
+        m_child->setParentSettings(globalConf);
 
         connect(child, &Task::succeeded, this, &InstanceStaging::childSucceeded);
         connect(child, &Task::failed, this, &InstanceStaging::childFailed);
@@ -1060,7 +1068,7 @@ class InstanceStaging : public Task {
 
 Task* InstanceList::wrapInstanceTask(InstanceTask* task)
 {
-    return new InstanceStaging(this, task, m_globalSettings);
+    return new InstanceStaging(this, task, APPLICATION->config());
 }
 
 QString InstanceList::getStagedInstancePath(const QString& targetDir)

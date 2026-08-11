@@ -149,7 +149,7 @@ void InstanceCopyTask::copyFinished()
     // FIXME: shouldn't this be able to report errors?
     auto instanceSettings = std::make_unique<INISettingsObject>(FS::PathCombine(m_stagingPath, "instance.cfg"));
 
-    BaseInstance* inst(new NullInstance(m_globalSettings, std::move(instanceSettings), m_stagingPath));
+    BaseInstance* inst(new NullInstance(*m_globalConfig, std::move(instanceSettings), m_stagingPath));
     inst->setName(name());
     inst->setIconKey(m_instIcon);
     inst->regenerateUuid();

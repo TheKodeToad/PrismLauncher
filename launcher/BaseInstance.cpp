@@ -45,6 +45,7 @@
 #include <QUuid>
 
 #include "Application.h"
+#include "config/GlobalConfig.h"
 #include "Json.h"
 #include "launch/LaunchTask.h"
 #include "settings/Setting.h"
@@ -52,25 +53,8 @@
 #include "BuildConfig.h"
 #include "Commandline.h"
 
-int getConsoleMaxLines(SettingsObject* settings)
-{
-    auto lineSetting = settings->getSetting("ConsoleMaxLines");
-    bool conversionOk = false;
-    int maxLines = lineSetting->get().toInt(&conversionOk);
-    if (!conversionOk) {
-        maxLines = lineSetting->defValue().toInt();
-        qWarning() << "ConsoleMaxLines has nonsensical value, defaulting to" << maxLines;
-    }
-    return maxLines;
-}
-
-bool shouldStopOnConsoleOverflow(SettingsObject* settings)
-{
-    return settings->get("ConsoleOverflowStop").toBool();
-}
-
-BaseInstance::BaseInstance(SettingsObject* globalSettings, std::unique_ptr<SettingsObject> settings, QString rootDir)
-    : m_rootDir(std::move(rootDir)), m_settings(std::move(settings)), m_global_settings(globalSettings)
+BaseInstance::BaseInstance(const GlobalConfig& globalConf, std::unique_ptr<SettingsObject> settings, QString rootDir)
+    : m_rootDir(std::move(rootDir)), m_settings(std::move(settings)), m_globalConfig(&globalConf)
 {
     m_settings->registerSetting("name", "Unnamed Instance");
     m_settings->registerSetting("iconKey", "default");
@@ -298,8 +282,8 @@ void BaseInstance::setMinecraftRunning(bool running)
         settings()->set("lastTimePlayed", secondsPlayed);
 
         if (countTimePlayed()) {
-            qint64 globalTotal = APPLICATION->playtimeSettings()->get("TotalPlayTime").toLongLong();
-            APPLICATION->playtimeSettings()->set("TotalPlayTime", globalTotal + secondsPlayed);
+            int64_t globalTotal = APPLICATION->config().totalPlayTime;
+            APPLICATION->updateConfig().totalPlayTime = globalTotal + secondsPlayed;
         }
 
         emit propertiesChanged();

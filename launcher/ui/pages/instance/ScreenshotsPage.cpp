@@ -37,6 +37,7 @@
 
 #include "ScreenshotsPage.h"
 #include "BuildConfig.h"
+#include "config/GlobalConfig.h"
 #include "ui_ScreenshotsPage.h"
 
 #include <QClipboard>
@@ -589,15 +590,12 @@ void ScreenshotsPage::openedImpl()
         }
     }
 
-    const auto setting_name = QString("WideBarVisibility_%1").arg(id());
-    m_wide_bar_setting = APPLICATION->settings()->getOrRegisterSetting(setting_name);
-
-    ui->toolBar->setVisibilityState(QByteArray::fromBase64(m_wide_bar_setting->get().toString().toUtf8()));
+    ui->toolBar->setVisibilityState(APPLICATION->config().uiWideBarState.value(id()));
 }
 
 void ScreenshotsPage::closedImpl()
 {
-    m_wide_bar_setting->set(QString::fromUtf8(ui->toolBar->getVisibilityState().toBase64()));
+    APPLICATION->updateConfig().uiWideBarState[id()] = ui->toolBar->getVisibilityState();
 }
 
 #include "ScreenshotsPage.moc"

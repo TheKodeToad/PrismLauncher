@@ -59,6 +59,7 @@ class QDir;
 class Task;
 class LaunchTask;
 class BaseInstance;
+class GlobalConfig;
 
 /// Shortcut saving target representations
 enum class ShortcutTarget : std::uint8_t { Desktop, Applications, Other };
@@ -69,10 +70,6 @@ struct ShortcutData {
     QString filePath;
     ShortcutTarget target = ShortcutTarget::Other;
 };
-
-/// Console settings
-int getConsoleMaxLines(SettingsObject* settings);
-bool shouldStopOnConsoleOverflow(SettingsObject* settings);
 
 /*!
  * \brief Base class for instances.
@@ -86,7 +83,7 @@ class BaseInstance : public QObject {
     Q_OBJECT
    protected:
     /// no-touchy!
-    BaseInstance(SettingsObject* globalSettings, std::unique_ptr<SettingsObject> settings, QString rootDir);
+    BaseInstance(const GlobalConfig& conf, std::unique_ptr<SettingsObject> settings, QString rootDir);
 
    public: /* types */
     enum class Status : std::uint8_t {
@@ -279,7 +276,7 @@ class BaseInstance : public QObject {
    protected:
     void changeStatus(Status newStatus);
 
-    SettingsObject* globalSettings() const { return m_global_settings; }
+    const GlobalConfig* globalConfig() const { return m_globalConfig; }
 
     bool isSpecificSettingsLoaded() const { return m_specific_settings_loaded; }
     void setSpecificSettingsLoaded(bool loaded) { m_specific_settings_loaded = loaded; }
@@ -317,7 +314,7 @@ class BaseInstance : public QObject {
     bool m_hasUpdate = false;
     bool m_hasBrokenVersion = false;
 
-    SettingsObject* m_global_settings;
+    const GlobalConfig* m_globalConfig;
     bool m_specific_settings_loaded = false;
 };
 

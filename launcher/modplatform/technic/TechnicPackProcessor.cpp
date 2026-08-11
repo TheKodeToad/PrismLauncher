@@ -24,7 +24,7 @@
 #include <memory>
 #include "archive/ArchiveReader.h"
 
-void Technic::TechnicPackProcessor::run(SettingsObject* globalSettings,
+void Technic::TechnicPackProcessor::run(const GlobalConfig& globalConf,
                                         const QString& instName,
                                         const QString& instIcon,
                                         const QString& stagingPath,
@@ -34,7 +34,7 @@ void Technic::TechnicPackProcessor::run(SettingsObject* globalSettings,
     QString minecraftPath = FS::PathCombine(stagingPath, "minecraft");
     QString configPath = FS::PathCombine(stagingPath, "instance.cfg");
     auto instanceSettings = std::make_unique<INISettingsObject>(configPath);
-    MinecraftInstance instance(globalSettings, std::move(instanceSettings), stagingPath);
+    MinecraftInstance instance(globalConf, std::move(instanceSettings), stagingPath);
 
     instance.setName(instName);
 

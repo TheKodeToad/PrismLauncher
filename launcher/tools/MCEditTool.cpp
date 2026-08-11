@@ -4,24 +4,18 @@
 #include <QProcess>
 #include <QUrl>
 
+#include "Application.h"
 #include "BaseInstance.h"
-#include "minecraft/MinecraftInstance.h"
-#include "settings/SettingsObject.h"
-
-MCEditTool::MCEditTool(SettingsObject* settings)
-{
-    settings->registerSetting("MCEditPath");
-    m_settings = settings;
-}
+#include "config/GlobalConfig.h"
 
 void MCEditTool::setPath(QString& path)
 {
-    m_settings->set("MCEditPath", path);
+    APPLICATION->updateConfig().mcEditPath = path;
 }
 
-QString MCEditTool::path() const
+QString MCEditTool::path()
 {
-    return m_settings->get("MCEditPath").toString();
+    return APPLICATION->config().mcEditPath;
 }
 
 bool MCEditTool::check(const QString& toolPath, QString& error)

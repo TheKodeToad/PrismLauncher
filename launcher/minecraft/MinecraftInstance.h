@@ -56,7 +56,7 @@ class PackProfile;
 class MinecraftInstance : public BaseInstance {
     Q_OBJECT
    public:
-    MinecraftInstance(SettingsObject* globalSettings, std::unique_ptr<SettingsObject> settings, const QString& rootDir);
+    MinecraftInstance(const GlobalConfig& globalConf, std::unique_ptr<SettingsObject> settings, const QString& rootDir);
     virtual ~MinecraftInstance();
     virtual void saveNow() override;
 

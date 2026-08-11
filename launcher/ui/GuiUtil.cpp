@@ -44,6 +44,7 @@
 #include <QStandardPaths>
 
 #include "FileSystem.h"
+#include "config/GlobalConfig.h"
 #include "logs/AnonymizeLog.h"
 #include "net/NetJob.h"
 #include "net/NetRequest.h"
@@ -87,8 +88,8 @@ std::optional<QString> GuiUtil::uploadPaste(const QString& name, const QFileInfo
 std::optional<QString> GuiUtil::uploadPaste(const QString& name, const QString& text, QWidget* parentWidget)
 {
     ProgressDialog dialog(parentWidget);
-    auto pasteType = static_cast<PasteUpload::PasteType>(APPLICATION->settings()->get("PastebinType").toInt());
-    auto baseURL = APPLICATION->settings()->get("PastebinCustomAPIBase").toString();
+    auto pasteType = static_cast<PasteUpload::PasteType>(APPLICATION->config().pastebinType);
+    auto baseURL = APPLICATION->config().pastebinCustomApiBase.toString();
     bool shouldTruncate = false;
 
     if (baseURL.isEmpty())

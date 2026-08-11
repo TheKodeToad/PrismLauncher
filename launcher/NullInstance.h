@@ -38,11 +38,13 @@
 #include "BaseInstance.h"
 #include "launch/LaunchTask.h"
 
+class GlobalConfig;
+
 class NullInstance : public BaseInstance {
     Q_OBJECT
    public:
-    NullInstance(SettingsObject* globalSettings, std::unique_ptr<SettingsObject> settings, const QString& rootDir)
-        : BaseInstance(globalSettings, std::move(settings), rootDir)
+    NullInstance(const GlobalConfig& globalConf, std::unique_ptr<SettingsObject> settings, const QString& rootDir)
+        : BaseInstance(globalConf, std::move(settings), rootDir)
     {
         setVersionBroken(true);
     }

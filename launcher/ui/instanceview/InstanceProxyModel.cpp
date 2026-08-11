@@ -18,6 +18,7 @@
 #include <BaseInstance.h>
 #include <icons/IconList.h>
 #include "Application.h"
+#include "config/GlobalConfig.h"
 #include "InstanceView.h"
 
 #include <QDebug>
@@ -59,7 +60,7 @@ bool InstanceProxyModel::subSortLessThan(const QModelIndex& left, const QModelIn
 {
     BaseInstance* pdataLeft = static_cast<BaseInstance*>(left.internalPointer());
     BaseInstance* pdataRight = static_cast<BaseInstance*>(right.internalPointer());
-    QString sortMode = APPLICATION->settings()->get("InstSortMode").toString();
+    QString sortMode = APPLICATION->config().instSortMode;
     if (sortMode == "LastLaunch") {
         return pdataLeft->lastLaunch() > pdataRight->lastLaunch();
     } else if (sortMode == "Playtime") {

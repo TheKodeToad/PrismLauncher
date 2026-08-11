@@ -38,6 +38,7 @@
 
 #include "Application.h"
 #include "FileSystem.h"
+#include "config/GlobalConfig.h"
 #include "NullInstance.h"
 
 #include "QObjectPtr.h"
@@ -300,11 +301,11 @@ void InstanceImportTask::processFlame()
             originalInstanceId = originalInstanceIdIt.value();
         }
 
-        instCreationTask = makeShared<FlameCreationTask>(m_stagingPath, m_trustedSource, m_globalSettings, m_parent, packId, packVersionId,
+        instCreationTask = makeShared<FlameCreationTask>(m_stagingPath, m_trustedSource, *m_globalConfig, m_parent, packId, packVersionId,
                                                          originalInstanceId);
     } else {
         // FIXME: Find a way to get IDs in directly imported ZIPs
-        instCreationTask = makeShared<FlameCreationTask>(m_stagingPath, m_trustedSource, m_globalSettings, m_parent, QString(), QString());
+        instCreationTask = makeShared<FlameCreationTask>(m_stagingPath, m_trustedSource, *m_globalConfig, m_parent, QString(), QString());
     }
 
     instCreationTask->setName(modifiedName());
@@ -350,7 +351,7 @@ void InstanceImportTask::processTechnic()
     shared_qobject_ptr<Technic::TechnicPackProcessor> packProcessor{ new Technic::TechnicPackProcessor };
     connect(packProcessor.get(), &Technic::TechnicPackProcessor::succeeded, this, &InstanceImportTask::emitSucceeded);
     connect(packProcessor.get(), &Technic::TechnicPackProcessor::failed, this, &InstanceImportTask::emitFailed);
-    packProcessor->run(m_globalSettings, name(), m_instIcon, m_stagingPath);
+    packProcessor->run(*m_globalConfig, name(), m_instIcon, m_stagingPath);
 }
 
 void InstanceImportTask::processMultiMC()
@@ -358,7 +359,7 @@ void InstanceImportTask::processMultiMC()
     QString configPath = FS::PathCombine(m_stagingPath, "instance.cfg");
     auto instanceSettings = std::make_unique<INISettingsObject>(configPath);
 
-    NullInstance instance(m_globalSettings, std::move(instanceSettings), m_stagingPath);
+    NullInstance instance(*m_globalConfig, std::move(instanceSettings), m_stagingPath);
 
     // reset time played on import... because packs.
     instance.resetTimePlayed();
@@ -397,7 +398,7 @@ void InstanceImportTask::processModrinth()
             originalInstanceId = originalInstanceIdIt.value();
         }
 
-        instCreationTask = makeShared<ModrinthCreationTask>(m_stagingPath, m_trustedSource, m_globalSettings, m_parent, packId,
+        instCreationTask = makeShared<ModrinthCreationTask>(m_stagingPath, m_trustedSource, *m_globalConfig, m_parent, packId,
                                                             packVersionId, originalInstanceId);
     } else {
         QString packId;
@@ -407,7 +408,7 @@ void InstanceImportTask::processModrinth()
         }
 
         // FIXME: Find a way to get the ID in directly imported ZIPs
-        instCreationTask = makeShared<ModrinthCreationTask>(m_stagingPath, m_trustedSource, m_globalSettings, m_parent, packId);
+        instCreationTask = makeShared<ModrinthCreationTask>(m_stagingPath, m_trustedSource, *m_globalConfig, m_parent, packId);
     }
 
     instCreationTask->setName(modifiedName());

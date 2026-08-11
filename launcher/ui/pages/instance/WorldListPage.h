@@ -85,7 +85,6 @@ class WorldListPage : public QMainWindow, public BasePage {
     unique_qobject_ptr<LoggedProcess> m_mceditProcess;
     bool m_mceditStarting = false;
 
-    std::shared_ptr<Setting> m_wide_bar_setting = nullptr;
     std::unique_ptr<DataPackFolderModel> m_datapackModel;
 
    private slots:

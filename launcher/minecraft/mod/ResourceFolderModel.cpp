@@ -17,6 +17,7 @@
 #include "Application.h"
 #include "FileSystem.h"
 
+#include "config/GlobalConfig.h"
 #include "minecraft/mod/tasks/ResourceFolderLoadTask.h"
 
 #include "Json.h"
@@ -45,7 +46,7 @@ ResourceFolderModel::ResourceFolderModel(const QDir& dir, MinecraftInstance* ins
         m_resourceResolverRunning = false;
     });
     if (APPLICATION_DYN) {  // in tests the application macro doesn't work
-        m_resourceResolver.setMaxConcurrent(APPLICATION->settings()->get("NumberOfConcurrentTasks").toInt());
+        m_resourceResolver.setMaxConcurrent(APPLICATION->config().numberOfConcurrentTasks);
     }
 }
 
@@ -524,7 +525,7 @@ bool ResourceFolderModel::validateIndex(const QModelIndex& index) const
 // and they only delegate to the superclass for compatible columns
 QBrush ResourceFolderModel::rowBackground(int row) const
 {
-    if (APPLICATION->settings()->get("ShowModIncompat").toBool() && m_resources[row]->hasIssues()) {
+    if (APPLICATION->config().showModIncompat && m_resources[row]->hasIssues()) {
         return { QColor(255, 0, 0, 40) };
     }
     return {};
@@ -561,7 +562,7 @@ QVariant ResourceFolderModel::data(const QModelIndex& index, int role) const
             QString tooltip = m_resources[row]->internalId();
 
             if (column == NameColumn) {
-                if (APPLICATION->settings()->get("ShowModIncompat").toBool()) {
+                if (APPLICATION->config().showModIncompat) {
                     for (const QString& issue : at(row).issues()) {
                         tooltip += "\n" + issue;
                     }
@@ -584,7 +585,7 @@ QVariant ResourceFolderModel::data(const QModelIndex& index, int role) const
         }
         case Qt::DecorationRole: {
             if (column == NameColumn) {
-                if (APPLICATION->settings()->get("ShowModIncompat").toBool() && at(row).hasIssues()) {
+                if (APPLICATION->config().showModIncompat && at(row).hasIssues()) {
                     return QIcon::fromTheme("status-bad");
                 }
                 if (at(row).isSymLinkUnder(instDirPath()) || at(row).isMoreThanOneHardLink()) {
@@ -677,17 +678,24 @@ void ResourceFolderModel::saveColumns(QTreeView* tree)
 
     // neither passthrough nor override settings works for this usecase as I need to only set the global when the gate is false
     auto* settings = m_instance->settings();
-    if (!settings->get(overrideSettingName).toBool()) {
-        settings = APPLICATION->settings();
-    }
-    auto visibility = Json::toMap(settings->get(visibilitySettingName).toString());
-    for (auto i = 0; i < m_columnNames.size(); ++i) {
-        if (m_columnsHideable[i]) {
-            auto name = m_columnNames[i];
-            visibility[name] = !tree->isColumnHidden(i);
+    if (settings->get(overrideSettingName).toBool()) {
+        auto visibility = Json::toMap(settings->get(visibilitySettingName).toString());
+        for (auto i = 0; i < m_columnNames.size(); ++i) {
+            if (m_columnsHideable[i]) {
+                auto name = m_columnNames[i];
+                visibility[name] = !tree->isColumnHidden(i);
+            }
+        }
+        settings->set(visibilitySettingName, Json::fromMap(visibility));
+    } else {
+        auto& map = APPLICATION->updateConfig().uiColumnVisibility[id()];
+        for (auto i = 0; i < m_columnNames.size(); ++i) {
+            if (m_columnsHideable[i]) {
+                auto name = m_columnNames[i];
+                map[name] = !tree->isColumnHidden(i);
+            }
         }
     }
-    settings->set(visibilitySettingName, Json::fromMap(visibility));
 }
 
 void ResourceFolderModel::loadColumns(QTreeView* tree)
@@ -718,19 +726,18 @@ void ResourceFolderModel::loadColumns(QTreeView* tree)
     });
     // neither passthrough nor override settings works for this usecase as I need to only set the global when the gate is false
     auto* settings = m_instance->settings();
-    if (!settings->getOrRegisterSetting(overrideSettingName, false)->get().toBool()) {
-        settings = APPLICATION->settings();
+    if (settings->getOrRegisterSetting(overrideSettingName, false)->get().toBool()) {
+        auto visibility = settings->getOrRegisterSetting(visibilitySettingName, defaultValue);
+        setVisible(visibility->get());
     }
-    auto visibility = settings->getOrRegisterSetting(visibilitySettingName, defaultValue);
-    setVisible(visibility->get());
+    // FIXME: use global setting
 
     // allways connect the signal in case the setting is toggled on and off
-    auto gSetting = APPLICATION->settings()->getOrRegisterSetting(visibilitySettingName, defaultValue);
-    connect(gSetting.get(), &Setting::SettingChanged, tree, [this, setVisible, overrideSettingName](const Setting&, const QVariant& value) {
-        if (!m_instance->settings()->get(overrideSettingName).toBool()) {
-            setVisible(value);
-        }
-    });
+    // connect(&APPLICATION->config(), &GlobalConfig::updated, tree, [this, setVisible, overrideSettingName]() {
+        // if (!m_instance->settings()->get(overrideSettingName).toBool()) {
+        //     setVisible(APPLICATION->config());
+        // }
+    // });
 }
 
 QMenu* ResourceFolderModel::createHeaderContextMenu(QTreeView* tree)

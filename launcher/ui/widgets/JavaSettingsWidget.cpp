@@ -42,6 +42,7 @@
 #include "Application.h"
 #include "BuildConfig.h"
 #include "FileSystem.h"
+#include "config/GlobalConfig.h"
 #include "HardwareInfo.h"
 #include "JavaCommon.h"
 #include "SysInfo.h"
@@ -117,112 +118,149 @@ JavaSettingsWidget::~JavaSettingsWidget()
 
 void JavaSettingsWidget::loadSettings()
 {
-    SettingsObject* settings;
+    if (m_instance != nullptr) {
+        SettingsObject* settings = m_instance->settings();
 
-    if (m_instance != nullptr)
-        settings = m_instance->settings();
-    else
-        settings = APPLICATION->settings();
+        // Java Settings
+        m_ui->javaInstallationGroupBox->setChecked(settings->get("OverrideJavaLocation").toBool());
+        m_ui->javaPathTextBox->setText(settings->get("JavaPath").toString());
 
-    // Java Settings
-    m_ui->javaInstallationGroupBox->setChecked(settings->get("OverrideJavaLocation").toBool());
-    m_ui->javaPathTextBox->setText(settings->get("JavaPath").toString());
+        m_ui->skipCompatibilityCheckBox->setChecked(settings->get("IgnoreJavaCompatibility").toBool());
 
-    m_ui->skipCompatibilityCheckBox->setChecked(settings->get("IgnoreJavaCompatibility").toBool());
+        m_ui->javaArgumentsGroupBox->setChecked(m_instance == nullptr || settings->get("OverrideJavaArgs").toBool());
+        m_ui->jvmArgsTextBox->setPlainText(settings->get("JvmArgs").toString());
 
-    m_ui->javaArgumentsGroupBox->setChecked(m_instance == nullptr || settings->get("OverrideJavaArgs").toBool());
-    m_ui->jvmArgsTextBox->setPlainText(settings->get("JvmArgs").toString());
+        if (m_instance == nullptr) {
+            m_ui->skipWizardCheckBox->setChecked(settings->get("IgnoreJavaWizard").toBool());
+            m_ui->autodetectJavaCheckBox->setChecked(settings->get("AutomaticJavaSwitch").toBool());
+            m_ui->autodetectJavaCheckBox->stateChanged(m_ui->autodetectJavaCheckBox->isChecked());
+            m_ui->autodownloadJavaCheckBox->setChecked(settings->get("AutomaticJavaDownload").toBool());
+        }
 
-    if (m_instance == nullptr) {
-        m_ui->skipWizardCheckBox->setChecked(settings->get("IgnoreJavaWizard").toBool());
-        m_ui->autodetectJavaCheckBox->setChecked(settings->get("AutomaticJavaSwitch").toBool());
-        m_ui->autodetectJavaCheckBox->stateChanged(m_ui->autodetectJavaCheckBox->isChecked());
-        m_ui->autodownloadJavaCheckBox->setChecked(settings->get("AutomaticJavaDownload").toBool());
-    }
+        // Memory
+        m_ui->memoryGroupBox->setChecked(m_instance == nullptr || settings->get("OverrideMemory").toBool());
+        int min = settings->get("MinMemAlloc").toInt();
+        int max = settings->get("MaxMemAlloc").toInt();
+        if (min < max) {
+            m_ui->minMemSpinBox->setValue(min);
+            m_ui->maxMemSpinBox->setValue(max);
+        } else {
+            m_ui->minMemSpinBox->setValue(max);
+            m_ui->maxMemSpinBox->setValue(min);
+        }
+        m_ui->permGenSpinBox->setValue(settings->get("PermGen").toInt());
+        m_ui->lowMemWarningCheckBox->setChecked(settings->get("LowMemWarning").toBool());
 
-    // Memory
-    m_ui->memoryGroupBox->setChecked(m_instance == nullptr || settings->get("OverrideMemory").toBool());
-    int min = settings->get("MinMemAlloc").toInt();
-    int max = settings->get("MaxMemAlloc").toInt();
-    if (min < max) {
-        m_ui->minMemSpinBox->setValue(min);
-        m_ui->maxMemSpinBox->setValue(max);
+        // Java arguments
+        m_ui->javaArgumentsGroupBox->setChecked(m_instance == nullptr || settings->get("OverrideJavaArgs").toBool());
+        m_ui->jvmArgsTextBox->setPlainText(settings->get("JvmArgs").toString());
     } else {
-        m_ui->minMemSpinBox->setValue(max);
-        m_ui->maxMemSpinBox->setValue(min);
-    }
-    m_ui->permGenSpinBox->setValue(settings->get("PermGen").toInt());
-    m_ui->lowMemWarningCheckBox->setChecked(settings->get("LowMemWarning").toBool());
+        const auto& conf = APPLICATION->config();
+        // Java Settings
+        m_ui->javaPathTextBox->setText(conf.javaPath);
 
-    // Java arguments
-    m_ui->javaArgumentsGroupBox->setChecked(m_instance == nullptr || settings->get("OverrideJavaArgs").toBool());
-    m_ui->jvmArgsTextBox->setPlainText(settings->get("JvmArgs").toString());
+        m_ui->skipCompatibilityCheckBox->setChecked(conf.ignoreJavaCompatibility);
+
+        m_ui->jvmArgsTextBox->setPlainText(conf.jvmArgs);
+
+        m_ui->skipWizardCheckBox->setChecked(conf.ignoreJavaWizard);
+        m_ui->autodetectJavaCheckBox->setChecked(conf.automaticJavaSwitch);
+        m_ui->autodetectJavaCheckBox->stateChanged(m_ui->autodetectJavaCheckBox->checkState());
+        m_ui->autodownloadJavaCheckBox->setChecked(conf.automaticJavaDownload);
+
+        // Memory
+        int min = conf.minMemAlloc;
+        int max = conf.maxMemAlloc;
+        if (min < max) {
+            m_ui->minMemSpinBox->setValue(min);
+            m_ui->maxMemSpinBox->setValue(max);
+        } else {
+            m_ui->minMemSpinBox->setValue(max);
+            m_ui->maxMemSpinBox->setValue(min);
+        }
+        m_ui->permGenSpinBox->setValue(conf.permGen);
+        m_ui->lowMemWarningCheckBox->setChecked(conf.lowMemWarning);
+    }
 }
 
 void JavaSettingsWidget::saveSettings()
 {
-    SettingsObject* settings;
+    if (m_instance != nullptr) {
+        SettingsObject* settings = m_instance->settings();
+        // Java Install Settings
+        bool javaInstall = m_instance == nullptr || m_ui->javaInstallationGroupBox->isChecked();
 
-    if (m_instance != nullptr)
-        settings = m_instance->settings();
-    else
-        settings = APPLICATION->settings();
+        if (m_instance != nullptr)
+            settings->set("OverrideJavaLocation", javaInstall);
 
-    // Java Install Settings
-    bool javaInstall = m_instance == nullptr || m_ui->javaInstallationGroupBox->isChecked();
+        if (javaInstall) {
+            settings->set("JavaPath", m_ui->javaPathTextBox->text());
+            settings->set("IgnoreJavaCompatibility", m_ui->skipCompatibilityCheckBox->isChecked());
+        } else {
+            settings->reset("JavaPath");
+            settings->reset("IgnoreJavaCompatibility");
+        }
 
-    if (m_instance != nullptr)
-        settings->set("OverrideJavaLocation", javaInstall);
+        if (m_instance == nullptr) {
+            settings->set("IgnoreJavaWizard", m_ui->skipWizardCheckBox->isChecked());
+            settings->set("AutomaticJavaSwitch", m_ui->autodetectJavaCheckBox->isChecked());
+            settings->set("AutomaticJavaDownload", m_ui->autodownloadJavaCheckBox->isChecked());
+        }
 
-    if (javaInstall) {
-        settings->set("JavaPath", m_ui->javaPathTextBox->text());
-        settings->set("IgnoreJavaCompatibility", m_ui->skipCompatibilityCheckBox->isChecked());
+        // Memory
+        bool memory = m_instance == nullptr || m_ui->memoryGroupBox->isChecked();
+
+        if (m_instance != nullptr)
+            settings->set("OverrideMemory", memory);
+
+        if (memory) {
+            int min = m_ui->minMemSpinBox->value();
+            int max = m_ui->maxMemSpinBox->value();
+            if (min < max) {
+                settings->set("MinMemAlloc", min);
+                settings->set("MaxMemAlloc", max);
+            } else {
+                settings->set("MinMemAlloc", max);
+                settings->set("MaxMemAlloc", min);
+            }
+            settings->set("PermGen", m_ui->permGenSpinBox->value());
+            settings->set("LowMemWarning", m_ui->lowMemWarningCheckBox->isChecked());
+        } else {
+            settings->reset("MinMemAlloc");
+            settings->reset("MaxMemAlloc");
+            settings->reset("PermGen");
+            settings->reset("LowMemWarning");
+        }
+
+        // Java arguments
+        bool javaArgs = m_instance == nullptr || m_ui->javaArgumentsGroupBox->isChecked();
+
+        if (m_instance != nullptr)
+            settings->set("OverrideJavaArgs", javaArgs);
+
+        if (javaArgs) {
+            settings->set("JvmArgs", m_ui->jvmArgsTextBox->toPlainText().replace("\n", " "));
+        } else {
+            settings->reset("JvmArgs");
+        }
     } else {
-        settings->reset("JavaPath");
-        settings->reset("IgnoreJavaCompatibility");
-    }
+        auto& conf = APPLICATION->updateConfig();
+        conf.javaPath = m_ui->javaPathTextBox->text();
+        conf.ignoreJavaCompatibility = m_ui->skipCompatibilityCheckBox->isChecked();
 
-    if (m_instance == nullptr) {
-        settings->set("IgnoreJavaWizard", m_ui->skipWizardCheckBox->isChecked());
-        settings->set("AutomaticJavaSwitch", m_ui->autodetectJavaCheckBox->isChecked());
-        settings->set("AutomaticJavaDownload", m_ui->autodownloadJavaCheckBox->isChecked());
-    }
-
-    // Memory
-    bool memory = m_instance == nullptr || m_ui->memoryGroupBox->isChecked();
-
-    if (m_instance != nullptr)
-        settings->set("OverrideMemory", memory);
-
-    if (memory) {
         int min = m_ui->minMemSpinBox->value();
         int max = m_ui->maxMemSpinBox->value();
         if (min < max) {
-            settings->set("MinMemAlloc", min);
-            settings->set("MaxMemAlloc", max);
+            conf.minMemAlloc = min;
+            conf.maxMemAlloc = max;
         } else {
-            settings->set("MinMemAlloc", max);
-            settings->set("MaxMemAlloc", min);
+            conf.minMemAlloc = max;
+            conf.maxMemAlloc = min;
         }
-        settings->set("PermGen", m_ui->permGenSpinBox->value());
-        settings->set("LowMemWarning", m_ui->lowMemWarningCheckBox->isChecked());
-    } else {
-        settings->reset("MinMemAlloc");
-        settings->reset("MaxMemAlloc");
-        settings->reset("PermGen");
-        settings->reset("LowMemWarning");
-    }
+        conf.permGen = m_ui->permGenSpinBox->value();
+        conf.lowMemWarning = m_ui->lowMemWarningCheckBox->isChecked();
 
-    // Java arguments
-    bool javaArgs = m_instance == nullptr || m_ui->javaArgumentsGroupBox->isChecked();
-
-    if (m_instance != nullptr)
-        settings->set("OverrideJavaArgs", javaArgs);
-
-    if (javaArgs) {
-        settings->set("JvmArgs", m_ui->jvmArgsTextBox->toPlainText().replace("\n", " "));
-    } else {
-        settings->reset("JvmArgs");
+        conf.jvmArgs = m_ui->jvmArgsTextBox->toPlainText().replace("\n", " ");
     }
 }
 
@@ -253,7 +291,7 @@ void JavaSettingsWidget::onJavaTest()
     if (m_instance == nullptr || m_ui->javaArgumentsGroupBox->isChecked())
         jvmArgs = m_ui->jvmArgsTextBox->toPlainText().replace("\n", " ");
     else
-        jvmArgs = APPLICATION->settings()->get("JvmArgs").toString();
+        jvmArgs = APPLICATION->config().jvmArgs;
 
     m_checker.reset(new JavaCommon::TestCheck(this, m_ui->javaPathTextBox->text(), jvmArgs, m_ui->minMemSpinBox->value(),
                                               m_ui->maxMemSpinBox->value(), m_ui->permGenSpinBox->value()));

@@ -36,6 +36,7 @@
 
 #include "JavaPage.h"
 #include "BuildConfig.h"
+#include "config/GlobalConfig.h"
 #include "JavaCommon.h"
 #include "java/JavaInstall.h"
 #include "ui/dialogs/CustomMessageBox.h"
@@ -85,7 +86,7 @@ void JavaPage::retranslate()
 bool JavaPage::apply()
 {
     ui->javaSettings->saveSettings();
-    JavaCommon::checkJVMArgs(APPLICATION->settings()->get("JvmArgs").toString(), this);
+    JavaCommon::checkJVMArgs(APPLICATION->config().jvmArgs, this);
     return true;
 }
 
