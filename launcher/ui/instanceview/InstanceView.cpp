@@ -543,37 +543,6 @@ void InstanceView::paintEvent([[maybe_unused]] QPaintEvent* event)
         }
         itemDelegate()->paint(&painter, option, index);
     }
-
-    /*
-     * Drop indicators for manual reordering...
-     */
-#if 0
-    if (!m_lastDragPosition.isNull())
-    {
-        std::pair<VisualGroup *, VisualGroup::HitResults> pair = rowDropPos(m_lastDragPosition);
-        VisualGroup *category = pair.first;
-        VisualGroup::HitResults row = pair.second;
-        if (category)
-        {
-            int internalRow = row - category->firstItemIndex;
-            QLine line;
-            if (internalRow >= category->numItems())
-            {
-                QRect toTheRightOfRect = visualRect(category->lastItem());
-                line = QLine(toTheRightOfRect.topRight(), toTheRightOfRect.bottomRight());
-            }
-            else
-            {
-                QRect toTheLeftOfRect = visualRect(model()->index(row, 0));
-                line = QLine(toTheLeftOfRect.topLeft(), toTheLeftOfRect.bottomLeft());
-            }
-            painter.save();
-            painter.setPen(QPen(Qt::black, 3));
-            painter.drawLine(line);
-            painter.restore();
-        }
-    }
-#endif
 }
 
 void InstanceView::resizeEvent([[maybe_unused]] QResizeEvent* event)
