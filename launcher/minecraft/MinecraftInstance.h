@@ -36,13 +36,13 @@
 
 #pragma once
 #include <java/JavaVersion.h>
-#include <minecraft/mod/DataPackFolderModel.h>
 #include <QDir>
 #include <QProcess>
 #include "BaseInstance.h"
 #include "minecraft/launch/MinecraftTarget.h"
-#include "minecraft/mod/Mod.h"
 
+class DataPackFolderModel;
+class Mod;
 class ModFolderModel;
 class ResourceFolderModel;
 class ResourcePackFolderModel;
