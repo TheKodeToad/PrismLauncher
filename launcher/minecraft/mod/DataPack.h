@@ -53,6 +53,12 @@ class DataPack : public Resource {
     /** Thread-safe. */
     void setDescription(QString new_description);
 
+    void loadIcon() override;
+
+    QPixmap icon(QSize size) const override { return m_iconCache.icon(size); }
+
+    QIcon fallbackIcon() const override { return QIcon::fromTheme("datapacks"); }
+
     /** Thread-safe. */
     void setImage(QImage new_image) const;
 
@@ -80,13 +86,5 @@ class DataPack : public Resource {
      */
     QString m_description;
 
-    /** The data pack's image file cache key, for access in the QPixmapCache global instance.
-     *
-     *  The 'was_ever_used' state simply identifies whether the key was never inserted on the cache (true),
-     *  so as to tell whether a cache entry is inexistent or if it was just evicted from the cache.
-     */
-    struct {
-        QPixmapCache::Key key;
-        bool was_ever_used = false;
-    } mutable m_pack_image_cache_key;
+    ResourceIconCache m_iconCache;
 };

@@ -270,7 +270,8 @@ void Mod::finishResolvingWithDetails(ModDetails&& details)
 
     m_localDetails = std::move(details);
     if (!iconPath().isEmpty()) {
-        m_packImageCacheKey.wasReadAttempt = false;
+        // FIXME
+        // m_packImageCacheKey.wasReadAttempt = false;
     }
 }
 
@@ -284,55 +285,18 @@ auto Mod::issueTracker() const -> QString
     return details().issue_tracker;
 }
 
-QPixmap Mod::setIcon(const QImage& newImage) const
+void Mod::loadIcon()
 {
-    QMutexLocker locker(&m_dataLock);
-
-    Q_ASSERT(!newImage.isNull());
-
-    if (m_packImageCacheKey.key.isValid()) {
-        QPixmapCache::remove(m_packImageCacheKey.key);
+    if (iconPath().isEmpty()) {
+        return;
     }
 
-    // scale the image to avoid flooding the pixmapcache
-    auto pixmap = QPixmap::fromImage(newImage.scaled({ 64, 64 }, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-
-    m_packImageCacheKey.key = QPixmapCache::insert(pixmap);
-    m_packImageCacheKey.wasEverUsed = true;
-    m_packImageCacheKey.wasReadAttempt = true;
-    return pixmap;
+    m_iconCache.loadIcon([this] { return ModUtils::loadIconFile(*this); }, [this] { emit iconChanged(); });
 }
 
-QPixmap Mod::icon(QSize size, Qt::AspectRatioMode mode) const
+QIcon Mod::fallbackIcon() const
 {
-    auto pixmapTransform = [&size, &mode](QPixmap pixmap) {
-        if (size.isNull()) {
-            return pixmap;
-        }
-        return pixmap.scaled(size, mode, Qt::SmoothTransformation);
-    };
-
-    QPixmap cachedImage;
-    if (QPixmapCache::find(m_packImageCacheKey.key, &cachedImage)) {
-        return pixmapTransform(cachedImage);
-    }
-
-    // No valid image we can get
-    if ((!m_packImageCacheKey.wasEverUsed && m_packImageCacheKey.wasReadAttempt) || iconPath().isEmpty()) {
-        return {};
-    }
-
-    if (m_packImageCacheKey.wasEverUsed) {
-        qDebug() << "Mod" << name() << "Had it's icon evicted from the cache. reloading...";
-    }
-    // Image got evicted from the cache or an attempt to load it has not been made. load it and retry.
-    m_packImageCacheKey.wasReadAttempt = true;
-
-    if (ModUtils::loadIconFile(*this, &cachedImage)) {
-        return pixmapTransform(cachedImage);
-    }
-    // Image failed to load
-    return {};
+    return QIcon::fromTheme("loadermods");
 }
 
 bool Mod::valid() const

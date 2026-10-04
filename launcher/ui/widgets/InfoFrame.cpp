@@ -76,7 +76,7 @@ InfoFrame::~InfoFrame()
     delete ui;
 }
 
-void InfoFrame::updateWithMod(const Mod& m)
+void InfoFrame::updateWithMod(Mod& m)
 {
     QString text = "";
     QString name = "";
@@ -102,7 +102,13 @@ void InfoFrame::updateWithMod(const Mod& m)
         setDescription(renderColorCodes(m.description()));
     }
 
-    setImage(m.icon({ 64, 64 }, Qt::KeepAspectRatio));
+    const auto pixmap = m.icon({ 64, 64 });
+    if (pixmap.isNull()) {
+        m.loadIcon();
+        setImage(m.fallbackIcon().pixmap({ 64, 64 }));
+    } else {
+        setImage(pixmap);
+    }
 
     auto licenses = m.licenses();
     QString licenseText = "";

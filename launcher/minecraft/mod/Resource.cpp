@@ -402,3 +402,15 @@ QDebug operator<<(QDebug debug, ResourceStatus status)
     };
     return debug;
 }
+
+QPixmap ResourceIconCache::icon(QSize size) const
+{
+    QPixmap icon;
+    if (!QPixmapCache::find(m_cacheKey, &icon)) {
+        return {};
+    }
+
+    // NOTE: only enable antialiasing when scaling down to keep pixel art intact
+    const auto scaleMode = size.width() < icon.width() || size.height() < icon.height() ? Qt::SmoothTransformation : Qt::FastTransformation;
+    return icon.scaled(size, Qt::KeepAspectRatio, scaleMode);
+}

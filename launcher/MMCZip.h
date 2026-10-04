@@ -47,9 +47,7 @@
 #include <optional>
 #include "archive/ArchiveReader.h"
 
-#if defined(LAUNCHER_APPLICATION)
-#include "minecraft/mod/Mod.h"
-#endif
+class Mod;
 
 namespace MMCZip {
 using FilterFileFunction = std::function<bool(const QFileInfo&)>;

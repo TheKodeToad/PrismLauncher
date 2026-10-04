@@ -709,28 +709,16 @@ bool validate(QFileInfo file)
     return ModUtils::process(mod, ProcessingLevel::BasicInfoOnly) && mod.valid();
 }
 
-bool processIconPNG(const Mod& mod, QByteArray&& raw_data, QPixmap* pixmap)
-{
-    auto img = QImage::fromData(raw_data);
-    if (!img.isNull()) {
-        *pixmap = mod.setIcon(img);
-    } else {
-        qWarning() << "Failed to parse mod logo:" << mod.iconPath() << "from" << mod.name();
-        return false;
-    }
-    return true;
-}
-
-bool loadIconFile(const Mod& mod, QPixmap* pixmap)
+QPixmap loadIconFile(const Mod& mod)
 {
     if (mod.iconPath().isEmpty()) {
         qWarning() << "No Iconfile set, be sure to parse the mod first";
-        return false;
+        return {};
     }
 
-    auto png_invalid = [&mod](const QString& reason) {
+    auto pngInvalid = [&mod](const QString& reason) {
         qWarning() << "Mod at" << mod.fileinfo().filePath() << "does not have a valid icon:" << reason;
-        return false;
+        return QPixmap();
     };
 
     switch (mod.type()) {
@@ -740,21 +728,20 @@ bool loadIconFile(const Mod& mod, QPixmap* pixmap)
             if (file) {
                 auto data = file->readAll();
 
-                bool icon_result = ModUtils::processIconPNG(mod, std::move(data), pixmap);
-
-                if (!icon_result) {
-                    return png_invalid("invalid png image");  // icon png invalid
+                QPixmap result;
+                if (!result.loadFromData(data)) {
+                    return pngInvalid("invalid png image");  // icon png invalid
                 }
-                return true;
+                return result;
             }
-            return png_invalid("Failed to set '" + mod.iconPath() +
+            return pngInvalid("Failed to set '" + mod.iconPath() +
                                "' as current file in zip archive");  // could not set icon as current file.
         }
         case ResourceType::LITEMOD: {
-            return png_invalid("litemods do not have icons");  // can lightmods even have icons?
+            return pngInvalid("litemods do not have icons");  // can lightmods even have icons?
         }
         default:
-            return png_invalid("Invalid type for mod, can not load icon.");
+            return pngInvalid("Invalid type for mod, can not load icon.");
     }
 }
 

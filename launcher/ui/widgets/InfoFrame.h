@@ -61,7 +61,7 @@ class InfoFrame : public QFrame {
 
     void clear();
 
-    void updateWithMod(Mod const& m);
+    void updateWithMod(Mod& m);
     void updateWithResource(Resource const& resource);
     void updateWithResourcePack(ResourcePack& rp);
     void updateWithDataPack(DataPack& rp);

@@ -156,7 +156,18 @@ ExternalResourcesPage::ExternalResourcesPage(MinecraftInstance* instance, Resour
     connect(selectionModel, &QItemSelectionModel::selectionChanged, this, [this] { updateActions(); });
     connect(m_model, &ResourceFolderModel::rowsInserted, this, [this] { updateActions(); });
     connect(m_model, &ResourceFolderModel::rowsRemoved, this, [this] { updateActions(); });
-    connect(m_model, &ResourceFolderModel::dataChanged, this, [this] { updateActions(); });
+    connect(m_model, &ResourceFolderModel::dataChanged, this,
+            [this, selectionModel](const QModelIndex& topLeft, const QModelIndex& bottomRight) {
+                updateActions();
+                const int currentRow = m_filterModel->mapToSource(selectionModel->currentIndex()).row();
+                if (!selectionModel->currentIndex().isValid()) {
+                    return;
+                }
+                if (currentRow < topLeft.row() || currentRow > bottomRight.row()) {
+                    return;
+                }
+                updateFrame(selectionModel->currentIndex(), {});
+            });
     connect(m_model, &ResourceFolderModel::sizeHintChanged, m_ui->treeView->itemDelegate(),
             [this] { m_ui->treeView->itemDelegate()->sizeHintChanged(QModelIndex()); });
 

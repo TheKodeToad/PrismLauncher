@@ -138,7 +138,7 @@ void ModFolderPage::updateFrame(const QModelIndex& current, [[maybe_unused]] con
 {
     auto sourceCurrent = m_filterModel->mapToSource(current);
     int row = sourceCurrent.row();
-    const Mod& mod = m_model->at(row);
+    Mod& mod = m_model->at(row);
     m_ui->frame->updateWithMod(mod);
 }
 

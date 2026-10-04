@@ -35,12 +35,17 @@
 
 #pragma once
 
-#include <cstdint>
-
+#include <QApplication>
 #include <QDateTime>
 #include <QFileInfo>
+#include <QMetaObject>
 #include <QObject>
+#include <QPixmap>
+#include <QPixmapCache>
 #include <QPointer>
+#include <QThreadPool>
+#include <Qt>
+#include <cstdint>
 #include <memory>
 
 #include "MetadataHandler.h"
@@ -91,7 +96,9 @@ enum class EnableAction : std::uint8_t { ENABLE, DISABLE, TOGGLE };
  *
  *  Subclass it to add additional data / behavior, such as Mods or Resource packs.
  */
-class Resource {
+class Resource : public QObject {
+    Q_OBJECT
+
    public:
     Resource(const Resource&) = delete;
     Resource& operator=(const Resource&) = delete;
@@ -186,6 +193,15 @@ class Resource {
 
     bool isMoreThanOneHardLink() const;
 
+    virtual QPixmap icon(QSize /*size*/) const { return {}; }
+
+    virtual QIcon fallbackIcon() const { return {}; }
+
+    virtual void loadIcon() {}
+
+   signals:
+    void iconChanged();
+
    protected:
     /* The file corresponding to this resource. */
     QFileInfo m_fileInfo{};
@@ -217,4 +233,56 @@ class Resource {
     QString m_sizeStr;
     qint64 m_sizeInfo = 0;
     std::uintmax_t m_hardLinkCount = 0;
+};
+
+class ResourceIconCache {
+   public:
+    template <typename LoadFunc, typename CallbackFunc>
+    void loadIcon(LoadFunc load, CallbackFunc callback)
+    {
+        if (m_isLoading) {
+            return;
+        }
+        // No valid image we can get
+        if (!m_wasEverUsed && m_wasReadAttempt) {
+            return;
+        }
+
+        m_isLoading = true;
+
+        QThreadPool::globalInstance()->start([this, load = std::move(load), callback = std::move(callback)] {
+            QPixmap pixmap = load();
+            if (pixmap.width() > 64 || pixmap.height() > 64) {
+                pixmap = pixmap.scaled(64, 64, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+            }
+
+            QPixmapCache::Key key;
+            QMetaObject::invokeMethod(
+                QApplication::instance(),
+                [this, pixmap = std::move(pixmap), callback = std::move(callback)] {
+                    if (m_cacheKey.isValid()) {
+                        QPixmapCache::remove(m_cacheKey);
+                    }
+                    if (!pixmap.isNull()) {
+                        m_cacheKey = QPixmapCache::insert(pixmap);
+                        m_wasEverUsed = m_cacheKey.isValid();
+                        if (!m_cacheKey.isValid()) {
+                            qWarning() << "Could not insert icon cache entry! Ignoring it";
+                        }
+                    }
+                    m_wasReadAttempt = true;
+                    m_isLoading = false;
+                    callback();
+                },
+                Qt::QueuedConnection);
+        });
+    }
+
+    QPixmap icon(QSize size) const;
+
+   private:
+    QPixmapCache::Key m_cacheKey;
+    bool m_wasEverUsed = false;
+    bool m_wasReadAttempt = false;
+    bool m_isLoading = false;
 };
