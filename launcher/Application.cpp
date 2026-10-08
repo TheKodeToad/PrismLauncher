@@ -335,7 +335,8 @@ Application::Application(int& argc, char** argv) : QApplication(argc, argv)
           { "alive", "Write a small '" + g_liveCheckFile + "' file after the launcher starts" },
           { "show-window", "Show the main launcher window (useful in combination with --launch)" },
           { { "I", "import" }, "Import instance or resource from specified local path or URL", "url" },
-          { "show", "Opens the window for the specified instance (by instance ID)", "show" } });
+          { "show", "Opens the window for the specified instance (by instance ID)", "show" },
+          { "modrinth-helper" } });
     // Has to be positional for some OS to handle that properly
     parser.addPositionalArgument("URL", "Import the resource(s) at the given URL(s) (same as -I / --import)", "[URL...]");
 
@@ -772,6 +773,11 @@ Application::Application(int& argc, char** argv) : QApplication(argc, argv)
 
         // Legacy settings
         m_settings->registerSetting("OnlineFixes", false);
+
+        // Sandboxing settings
+        m_settings->registerSetting("SandboxEnabled", false);
+        m_settings->registerSetting("SandboxNetworkAccess", true);
+        m_settings->registerSetting("SandboxFileSystemAccess", "{}");
 
         // Native library workarounds
         m_settings->registerSetting("UseNativeOpenAL", false);

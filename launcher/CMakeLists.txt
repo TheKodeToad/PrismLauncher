@@ -163,6 +163,8 @@ set(LAUNCH_SOURCES
     launch/LogModel.h
     launch/TaskStepWrapper.cpp
     launch/TaskStepWrapper.h
+    launch/SandboxedProcess.cpp
+    launch/SandboxedProcess.h
     logs/LogParser.cpp
     logs/LogParser.h
 )
@@ -1109,6 +1111,8 @@ SET(LAUNCHER_SOURCES
     ui/widgets/CustomCommands.h
     ui/widgets/EnvironmentVariables.cpp
     ui/widgets/EnvironmentVariables.h
+    ui/widgets/FileSystemAccessWidget.cpp
+    ui/widgets/FileSystemAccessWidget.h
     ui/widgets/IconLabel.cpp
     ui/widgets/IconLabel.h
     ui/widgets/JavaWizardWidget.cpp
@@ -1486,6 +1490,10 @@ else()
     target_compile_options(Launcher_logic PRIVATE -Wno-unused-parameter -Wno-missing-field-initializers -Wno-unknown-warning-option -Wno-sfinae-incomplete)
     target_compile_options(${Launcher_Name} PRIVATE -Wno-unused-parameter -Wno-missing-field-initializers -Wno-unknown-warning-option -Wno-sfinae-incomplete)
 endif()
+
+target_link_directories(Launcher_logic PRIVATE C:/Users/Me/Projects/Modrinth/target/release)
+target_include_directories(Launcher_logic PRIVATE C:/Users/Me/Projects/Modrinth/packages/modrinth-sandbox)
+target_link_libraries(Launcher_logic C:/Users/Me/Projects/Modrinth/target/release/modrinth_sandbox.dll.lib)
 
 #### The bundle mess! ####
 # Bundle utilities are used to complete packages for different platforms - they add all the libraries that would otherwise be missing on the target system.
